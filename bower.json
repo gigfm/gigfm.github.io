@@ -1,0 +1,18 @@
+{
+  "name": "gigfm",
+  "description": "",
+  "main": "index.js",
+  "authors": [
+    "Gabriel Castillo <gcastillo@pandora.com>"
+  ],
+  "license": "ISC",
+  "moduleType": [],
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
