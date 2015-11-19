@@ -2,5 +2,4 @@
 npm-debug.log
 /node_modules
 /web/bower_components
-/web/dist
 /test/coverage
