@@ -1,0 +1,15 @@
+{
+  "extends": "pandora",
+  "env": {
+    "browser": true,
+    "jquery": true,
+    "mocha": true
+  },
+  "globals": {
+    "buster": false
+  },
+  "rules": {
+    "strict": [2, "global"],
+    "func-names": 0
+  }
+}

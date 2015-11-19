@@ -12,7 +12,11 @@
     "**/.*",
     "node_modules",
     "bower_components",
-    "test",
-    "tests"
-  ]
+    "test"
+  ],
+  "dependencies": {
+    "jquery.rdio": "~0.1.1",
+    "jquery": "~2.1.4",
+    "rdio-api": "https://www.rdio.com/api/api.js?client_id=c5zugitjrfft7f3mvzbjzajaaa"
+  }
 }
