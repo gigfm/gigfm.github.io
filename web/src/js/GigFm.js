@@ -1,3 +1,4 @@
+require('../../lib/modernizr.touch.js');
 var $ = require('../../bower_components/jquery/dist/jquery');
 var _ = require('../../lib/underscore.js');
 require('../../bower_components/rdio-api/index.js');
