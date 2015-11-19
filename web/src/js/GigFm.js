@@ -1,26 +1,61 @@
 require('../../lib/modernizr.touch.js');
 var $ = require('../../bower_components/jquery/dist/jquery');
-var _ = require('../../lib/underscore.js');
+var _ = require('../../bower_components/underscore/underscore.js');
 require('../../bower_components/rdio-api/index.js');
 require('../../lib/rdio-utils/rdio-utils.js');
 
 /*globals R, Main, Modernizr, rdioUtils */
 
-window.Main = {
-    // ----------
-    init: function() {
+function GigFm () {
+    if (!rdioUtils.startupChecks()) {
+        return;
+    }
+
+    this.$input = $('.search input');
+    this.$results = $('.results');
+
+    var rawTemplate = $.trim($('#album-template').text());
+    this.albumTemplate = _.template(rawTemplate);
+
+    R.ready($.proxy(this.onReady, this));
+}
+
+
+GigFm.prototype = {
+
+    onReady: function () {
         var self = this;
+        this.bindEvents();
 
-        this.$input = $(".search input");
-        this.$results = $(".results");
+        return R.request({
+            method: 'getTopCharts',
+            content: {
+                type: 'Album'
+            },
+            success: function(response) {
+                self.showResults(response.result);
+            },
+            error: function(response) {
+                $('.error').text(response.message);
+            }
+        });
+    },
 
-        var rawTemplate = $.trim($("#album-template").text());
-        this.albumTemplate = _.template(rawTemplate);
+
+
+
+    bindEvents: function () {
+        var self = this;
+        var $play = $('.header .play')
+            .click(function() {
+                R.player.togglePause();
+            });
+
 
         if (Modernizr.touch) {
             self.$results
                 .click(function() {
-                    $(".album").removeClass("hover");
+                    $('.album').removeClass('hover');
                 });
         } else {
             _.defer(function() {
@@ -28,7 +63,7 @@ window.Main = {
             });
         }
 
-        $(".search")
+        $('.search')
             .submit(function(event) {
                 event.preventDefault();
                 var query = self.$input.val();
@@ -39,103 +74,79 @@ window.Main = {
                 }
             });
 
-        if (!rdioUtils.startupChecks()) {
-            return;
-        }
-
-        R.ready(function() {
-            var $play = $(".header .play")
-                .click(function() {
-                    R.player.togglePause();
-                });
-
-            $(".header .next")
-                .click(function() {
-                    R.player.next();
-                });
-
-            $(".header .prev")
-                .click(function() {
-                    R.player.previous();
-                });
-
-            R.player.on("change:playingTrack", function(track) {
-                $(".header .icon").attr("src", track.get("icon"));
-                $(".header .track").text("Track: " + track.get("name"));
-                $(".header .album-title").text("Album: " + track.get("album"));
-                $(".header .artist").text("Artist: " + track.get("artist"));
+        $('.header .next')
+            .click(function() {
+                R.player.next();
             });
 
-            R.player.on("change:playState", function(state) {
-                if (state === R.player.PLAYSTATE_PLAYING || state === R.player.PLAYSTATE_BUFFERING) {
-                    $play.text("pause");
-                } else {
-                    $play.text("play");
-                }
+        $('.header .prev')
+            .click(function() {
+                R.player.previous();
             });
 
-            R.request({
-                method: "getTopCharts",
-                content: {
-                    type: "Album"
-                },
-                success: function(response) {
-                    self.showResults(response.result);
-                },
-                error: function(response) {
-                    $(".error").text(response.message);
-                }
-            });
+        R.player.on('change:playingTrack', function(track) {
+            $('.header .icon').attr('src', track.get('icon'));
+            $('.header .track').text('Track: ' + track.get('name'));
+            $('.header .album-title').text('Album: ' + track.get('album'));
+            $('.header .artist').text('Artist: ' + track.get('artist'));
         });
-    },
 
-    // ----------
-    search: function(query) {
-        var self = this;
-        R.request({
-            method: "search",
-            content: {
-                query: query,
-                types: "Album"
-            },
-            success: function(response) {
-                self.$input.val("");
-                self.showResults(response.result.results);
-            },
-            error: function(response) {
-                $(".error").text(response.message);
+        R.player.on('change:playState', function(state) {
+            if (state === R.player.PLAYSTATE_PLAYING || state === R.player.PLAYSTATE_BUFFERING) {
+                $play.text('pause');
+            } else {
+                $play.text('play');
             }
         });
     },
 
-    // ----------
+    search: function(query) {
+        var self = this;
+
+        return R.request({
+            method: 'search',
+            content: {
+                query: query,
+                types: 'Album'
+            },
+            success: function(response) {
+                self.$input.val('');
+                self.showResults(response.result.results);
+            },
+            error: function(response) {
+                $('.error').text(response.message);
+            }
+        });
+    },
+
+
     showResults: function(albums) {
         var self = this;
         this.$results.empty();
 
         _.each(albums, function(album) {
-            album.appUrl = album.shortUrl.replace("http", "rdio");
+            album.appUrl = album.shortUrl.replace('http', 'rdio');
             var $el = $(self.albumTemplate(album))
                 .appendTo(self.$results);
 
-            var $cover = $el.find(".icon");
+            var $cover = $el.find('.icon');
             if (Modernizr.touch) {
                 $cover.click(function(event) {
                     event.stopPropagation();
-                    if (!$el.hasClass("hover")) {
-                        $(".album").not($el).removeClass("hover");
-                        $el.addClass("hover");
+                    if (!$el.hasClass('hover')) {
+                        $('.album').not($el).removeClass('hover');
+                        $el.addClass('hover');
                     }
                 });
             } else {
                 $cover.hover(function() {
-                    $el.addClass("hover");
+                    $el.addClass('hover');
                 }, function() {
-                    $el.removeClass("hover");
+                    $el.removeClass('hover');
                 });
             }
 
-            $el.find(".play")
+            $el.find('.play')
                 .click(function() {
                     R.player.play({source: album.key});
                 });
@@ -143,4 +154,4 @@ window.Main = {
     }
 };
 
-Main.init();
+window.GigFm = GigFm;
