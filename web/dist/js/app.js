@@ -4831,26 +4831,24 @@ function MoreGigsView(gigs) {
 MoreGigsView.prototype = {
     render: function (num) {
         var self = this;
-        var liArray = [];
-        var $ul = $('<ul class="more-gigs-list">');
+        var divArray = [];
 
         _.some(this._tracks, function (track) {
-            var li = Mustache.render(self.template, {
+            var div = Mustache.render(self.template, {
                 image_url: track.info.icon,
                 artist: track.info.artist,
                 track_key: track.gig.trackKey,
                 ticket_url: track.gig.ticketUrl
             });
 
-            var $li = $(li);
-            $('.gig-play-artist-link', $li).click(self.onPlayArtistClick.bind(self));
+            var $div = $(div);
+            $('.gig-play-artist-link', $div).click(self.onPlayArtistClick.bind(self));
 
-            liArray.push($li);
-            return num && liArray.length >= num;
+            divArray.push($div);
+            return num && divArray.length >= num;
         });
 
-        $ul.append(liArray);
-        return $('.related-gigs').html($ul);
+        return $('.gigsWrapper').html(divArray);
     },
 
     loadTrackInfo: function () {
@@ -4874,7 +4872,7 @@ MoreGigsView.prototype = {
             self._tracks[key].info = info;
         });
 
-        this.render(4);
+        this.render(8);
     },
 
     onTrackInfoLoadError: function (response) {
@@ -4883,7 +4881,13 @@ MoreGigsView.prototype = {
 
     onPlayArtistClick: function (event) {
         event.preventDefault();
-        this.trigger('request:play-track', $(event.target).data('trackKey'));
+
+        var trackKey = $(event.target).data('trackKey');
+        if (!trackKey) {
+            trackKey = $(event.currentTarget).data('trackKey');
+        }
+
+        this.trigger('request:play-track', trackKey);
     },
 
     onReady: function () {

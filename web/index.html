@@ -414,43 +414,7 @@
                 <div id="relatedGigs">
                         <div class="relatedHeader"> Related gigs near you</div>
                         <!--<div class="moreGigs">View more gigs <div class="viewMoregigs"></div></div>-->
-                        <div class="gigsWrapper">
-                            <div class="relatedGig">
-                                <img src="img/teendaze.jpg">
-                                <div class="relatedTitle">Teen Daze</div>
-                            </div>
-                            <div class="relatedGig">
-                                <img src="img/keepshelly.jpg">
-                                <div class="relatedTitle">Keep Shelly in Athens</div>
-                            </div>
-                            <div class="relatedGig">
-                                <img src="img/purityring.jpg">
-                                <div class="relatedTitle">Purity Ring</div>
-                            </div>
-                            <div class="relatedGig">
-                                <img src="img/borngold.jpg">
-                                <div class="relatedTitle">Born Gold</div>
-                            </div>
-                            
-                            <div class="relatedGig">
-                                <img src="img/teendaze.jpg">
-                                <div class="relatedTitle">Teen Daze</div>
-                            </div>
-                            <div class="relatedGig">
-                                <img src="img/keepshelly.jpg">
-                                <div class="relatedTitle">Keep Shelly in Athens</div>
-                            </div>
-                            <div class="relatedGig">
-                                <img src="img/purityring.jpg">
-                                <div class="relatedTitle">Purity Ring</div>
-                            </div>
-                            <div class="relatedGig">
-                                <img src="img/borngold.jpg">
-                                <div class="relatedTitle">Born Gold</div>
-                            </div>
-                            
-                        </div>
-                
+                        <div class="gigsWrapper"></div>
                 </div>
                 
             </div>
@@ -458,14 +422,10 @@
     </div>
 
     <script id="gig-template" type="x-tmpl-mustache">
-        <li class="gig" style="background: url({{image_url}}) no-repeat center center; width: 200px; height: 200px;">
-            <div class="gig-artist-image">
-                <a href="{{ticket_url}}" class="gig-get-tickets-link" target="_blank">Get tickets</a>
-                <a href="#" class="gig-play-artist-link" data-track-key="{{track_key}}">Play artist</a>
-            </div>
-
-            <div class="artist label">{{artist}}</div>
-        </li>
+        <div class="relatedGig">
+            <a href="" class="gig-play-artist-link" data-track-key="{{track_key}}"><img src="{{image_url}}"></a>
+            <div class="relatedTitle">{{artist}}</div>
+        </div>
     </script>
 
     <script src="dist/js/app.js"></script>
