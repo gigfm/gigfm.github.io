@@ -6,10 +6,6 @@
 <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap-theme.css" />
 <link rel="stylesheet" type="text/css"href="bower_components/bootstrap/dist/css/bootstrap.css" />
 <link rel="stylesheet" type="text/css"href="css/fonts.css" />
-<script type="text/javascript" href="bower_components/bootstrap/dist/js/bootstrap.js" ></script>
-<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
-<script>
-</script>
 
 <style>
 	html, body {
@@ -48,13 +44,14 @@
 }
 	
 	.thumbDownButton, .thumbUpButton, .playButton, .pauseButton, .skipButton, .volumePosition {
-    background-color: transparent;
+        background-color: transparent;
+        cursor: pointer;
     	display: inline-block;
    		height: 55px;
    		margin: 0;
     	width: 55px;
-		 background-repeat: no-repeat;
-    background-size: 75% auto;
+        background-repeat: no-repeat;
+        background-size: 75% auto;
 	}
 	
 	.thumbDownButton {
@@ -298,9 +295,9 @@
                     <div class="buttons">
                         <div class="thumbDownButton"><a href="#"></a></div>
                         <div class="thumbUpButton"><a href="#"></a></div>
-                        <div class="playButton"><a href="#"></a></div>
-                        <div class="pauseButton"><a href="#"></a></div>
-                        <div class="skipButton"><a href="#"></a></div>
+                        <div class="playButton player-play-button"><a href="#"></a></div>
+                        <div class="pauseButton player-play-button"><a href="#"></a></div>
+                        <div class="skipButton player-next-button"><a href="#"></a></div>
                         <div class="volumePosition">
                             <div class="volumeControl">
                                 <div class="volumeBackground" style="display: none;">
@@ -313,20 +310,20 @@
                     </div>
                     
                     <div class="progress">
-                        <div class="remainingTime">-1:33</div>
-                        <div class="elapsedTime">2:05</div>
+                        <div class="remainingTime player-remaining"></div>
+                        <div class="elapsedTime player-current"></div>
                         <div class="progressBar"><img width="197" height="4" data-no-retina="" src="img/status.png" class="progressMiddle"></div>
                     </div>
                     
                     <div class="albumArt">
-                        <img src="img/artangels.jpg" />
+                        <img src="" class="player-track-image" />
                     </div>
                     
                     <div class="trackInfo_wrapper">
                         <div class="trackInfo">
-                            <div class="songName">Venus Fly (feat. Janelle Monáe)</div>
-                            <div class="artistName">Grimes</div>
-                            <div class="ablumName">Art Angels</div>
+                            <div class="songName player-track-name"></div>
+                            <div class="artistName player-track-artist"></div>
+                            <div class="ablumName player-track-album"></div>
                         </div>
                         <div class="showArtistinfo"></div>
                     </div>
@@ -345,15 +342,16 @@
                 <div id="contentWrapper">
             
                     <div id="blurb">
-                        Hey Gabriel, don’t miss out on seeing Grimes live.  Check out this upcoming gig near you:
+                        Hey <span class="personal-message-listener"></span>, don’t miss out on seeing <span class="personal-message-artist"></span> live.  Check out this upcoming gig near you:
                     </div>
                     
                     <div id="showInfo">
-                        <div class="showArtist">Grimes</div>
-                        <div class="showVenue">Paradise Rock Club</div>
-                        <div class="showCity">Boston, MA</div>
+                        <div class="showArtist venue-artist-name"></div>
+                        <div class="showVenue venue-name"></div>
+                        <div class="showCity venue-show-location"></div>
+                        <div class="showDate venue-show-date"></div>
                         <div class="showTickets">
-                            <a href="" class="btn">Get Tickets</a>
+                            <a href="#" target="_blank" class="btn venue-buy-tickets-link">Get Tickets</a>
                         </div>
                     </div>
             
@@ -361,9 +359,8 @@
                 
                 <div id="relatedGigs">
                         <div class="relatedHeader"> Related gigs near you</div>
-                        <div class="moreGigs">View more gigs <div class="viewMoregigs"></div></div>
+                        <!--<div class="moreGigs">View more gigs <div class="viewMoregigs"></div></div>-->
                         <div class="gigsWrapper">
-                        
                             <div class="relatedGig">
                                 <img src="img/teendaze.jpg">
                                 <span class="relatedTitle">Teen Daze</span>
@@ -380,7 +377,6 @@
                                 <img src="img/borngold.jpg">
                                 <span class="relatedTitle">Born Gold</span>
                             </div>
-                            
                         </div>
                 
                 </div>
@@ -388,24 +384,20 @@
             </div>
     </div>
     </div>
-<script>
 
-$(".showArtistinfo").click(function(){
-	$(".albumArt").toggleClass('close');
-	$(".showArtistinfo").toggleClass('collapseDown');
-	$("#artistBio").toggleClass('open');
-	
-	});
-	
-	$(".viewMoregigs").click(function(){
-	$("#contentWrapper").toggleClass('close');
-	$(".viewMoregigs").toggleClass('collapseDown');
-	$("#relatedGigs").toggleClass('open');
-	
-	});
-	
-</script>
+    <script id="gig-template" type="x-tmpl-mustache">
+        <li class="gig" style="background: url({{image_url}}) no-repeat center center; width: 200px; height: 200px;">
+            <div class="gig-artist-image">
+                <a href="{{ticket_url}}" class="gig-get-tickets-link" target="_blank">Get tickets</a>
+                <a href="#" class="gig-play-artist-link" data-track-key="{{track_key}}">Play artist</a>
+            </div>
 
+            <div class="artist label">{{artist}}</div>
+        </li>
+    </script>
+
+    <script src="dist/js/app.js"></script>
+    <script type="text/javascript" href="bower_components/bootstrap/dist/js/bootstrap.js" ></script>
 
 </body>
 </html>

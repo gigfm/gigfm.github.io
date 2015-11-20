@@ -5,8 +5,7 @@ var $ = require('../../../bower_components/jquery/dist/jquery');
 
 
 function Api() {
-    // this.url = '//gigfmapp.herokuapp.com/api/getTracks';
-    this.url = 'data.json';
+    this.url = '//gigfmapp.herokuapp.com/api/getTracks';
 }
 
 

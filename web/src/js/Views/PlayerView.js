@@ -83,6 +83,7 @@ PlayerView.prototype = {
     setTrackPosition: function () {
         var duration;
         var position;
+        var current;
         var self = this;
         var track = R.player.playingTrack();
         if (! track) {
@@ -91,13 +92,16 @@ PlayerView.prototype = {
 
         duration = track.get('duration');
         position = R.player.position();
+
         $('.player-current').text(this.toMinutes(position));
         $('.player-progress-current').width((position / duration) + '%');
+        $('.player-remaining').text('-' + this.toMinutes(duration - position));
 
         this._interval = setInterval(function () {
             var position = R.player.position();
             $('.player-current').text(self.toMinutes(position));
             $('.player-progress-current').width((position / duration) + '%');
+            $('.player-remaining').text('-' + self.toMinutes(duration - position));
         }, 1000);
     },
 
@@ -121,7 +125,13 @@ PlayerView.prototype = {
 
 
     renderState: function (state) {
-        $('.player-play-button').text(state);
+        if (state === 'pause') {
+            $('.playButton').css('display', 'none');
+            $('.pauseButton').css('display', 'inline-block');
+        } else {
+            $('.playButton').css('display', 'inline-block');
+            $('.pauseButton').css('display', 'none');
+        }
     },
 
 

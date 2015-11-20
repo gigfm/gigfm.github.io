@@ -4592,11 +4592,12 @@ module.exports = R;
 })(window.__rdio, window.rdioUtils);
 
 },{}],6:[function(require,module,exports){
+'use strict';
+
 var $ = require('../../../bower_components/jquery/dist/jquery');
 
 function Api() {
-    //this.url = '//gigfmapp.herokuapp.com/api/getTracks';
-    this.url = 'data.json';
+    this.url = '//gigfmapp.herokuapp.com/api/getTracks';
 }
 
 Api.prototype = {
@@ -4613,6 +4614,8 @@ Api.prototype = {
 module.exports = Api;
 
 },{"../../../bower_components/jquery/dist/jquery":1}],7:[function(require,module,exports){
+'use strict';
+
 var $ = require('../../../bower_components/jquery/dist/jquery');
 
 function Events() {
@@ -4622,7 +4625,7 @@ function Events() {
 Events.prototype = {
     on: function (eventName, callback) {
         if (!this._events[eventName]) {
-            this._events[eventName] = $.Callbacks();
+            this._events[eventName] = new $.Callbacks();
         }
 
         this._events[eventName].add(callback);
@@ -4646,6 +4649,8 @@ Events.prototype = {
 module.exports = Events;
 
 },{"../../../bower_components/jquery/dist/jquery":1}],8:[function(require,module,exports){
+'use strict';
+
 var $ = require('../../../bower_components/jquery/dist/jquery');
 
 function Location() {
@@ -4676,15 +4681,17 @@ Location.prototype = {
     },
 
     onGetCurrentPositionFail: function () {
-        // FAIL!!
+        alert('No location - No music');
     }
 };
 
 module.exports = Location;
 
 },{"../../../bower_components/jquery/dist/jquery":1}],9:[function(require,module,exports){
+'use strict';
+
 var $ = require('../../bower_components/jquery/dist/jquery');
-var _ = require('../../bower_components/underscore/underscore.js');
+
 require('../../lib/rdio-utils/rdio-utils.js');
 
 // Classes
@@ -4700,6 +4707,7 @@ var PlayerView = require('./Views/PlayerView.js');
 function GigFm() {
     if ('geolocation' in navigator) {
         var location = new Location();
+
         location.getLocation().done(this.onGetLocation.bind(this));
     } else {
         alert('Location information is not available.');
@@ -4714,10 +4722,8 @@ GigFm.prototype = {
     },
 
     onApiSuccess: function (response) {
-        var gig;
         var playerView;
         var moreGigsView;
-        var venueView;
 
         this.view = new GigFmView();
 
@@ -4744,20 +4750,35 @@ GigFm.prototype = {
         this.playerView.playTrack(trackKey);
     },
 
-    onApiFail: function (response) {
+    onApiFail: function () {
         alert('Failed fetching data from gigFm.');
     }
 };
 
 module.exports = GigFm;
 
-},{"../../bower_components/jquery/dist/jquery":1,"../../bower_components/underscore/underscore.js":4,"../../lib/rdio-utils/rdio-utils.js":5,"./Classes/Api.js":6,"./Classes/Location.js":8,"./Views/GigFmView.js":10,"./Views/MoreGigsView.js":11,"./Views/PlayerView.js":12,"./Views/VenueView.js":13}],10:[function(require,module,exports){
+},{"../../bower_components/jquery/dist/jquery":1,"../../lib/rdio-utils/rdio-utils.js":5,"./Classes/Api.js":6,"./Classes/Location.js":8,"./Views/GigFmView.js":10,"./Views/MoreGigsView.js":11,"./Views/PlayerView.js":12,"./Views/VenueView.js":13}],10:[function(require,module,exports){
+'use strict'
+
 /* global R */
+;
 require('../../../bower_components/rdio-api/index.js');
 
 var $ = require('../../../bower_components/jquery/dist/jquery');
 
-function GigFmView() {}
+function GigFmView() {
+    $('.showArtistinfo').click(function () {
+        $('.albumArt').toggleClass('close');
+        $('.showArtistinfo').toggleClass('collapseDown');
+        $('#artistBio').toggleClass('open');
+    });
+
+    $('.viewMoregigs').click(function () {
+        $('#contentWrapper').toggleClass('close');
+        $('.viewMoregigs').toggleClass('collapseDown');
+        $('#relatedGigs').toggleClass('open');
+    });
+}
 
 GigFmView.prototype = {
     render: function () {
@@ -4772,7 +4793,7 @@ GigFmView.prototype = {
 
             firstname = currentUser.get('firstName');
             if (!firstname) {
-                firstname = 'there fancy pants,';
+                firstname = 'there fancy pants';
             }
 
             $('.personal-message-listener').text(firstname);
@@ -4954,6 +4975,7 @@ PlayerView.prototype = {
     setTrackPosition: function () {
         var duration;
         var position;
+        var current;
         var self = this;
         var track = R.player.playingTrack();
         if (!track) {
@@ -4962,13 +4984,16 @@ PlayerView.prototype = {
 
         duration = track.get('duration');
         position = R.player.position();
+
         $('.player-current').text(this.toMinutes(position));
         $('.player-progress-current').width(position / duration + '%');
+        $('.player-remaining').text('-' + this.toMinutes(duration - position));
 
         this._interval = setInterval(function () {
             var position = R.player.position();
             $('.player-current').text(self.toMinutes(position));
             $('.player-progress-current').width(position / duration + '%');
+            $('.player-remaining').text('-' + self.toMinutes(duration - position));
         }, 1000);
     },
 
@@ -4989,7 +5014,13 @@ PlayerView.prototype = {
     },
 
     renderState: function (state) {
-        $('.player-play-button').text(state);
+        if (state === 'pause') {
+            $('.playButton').css('display', 'none');
+            $('.pauseButton').css('display', 'inline-block');
+        } else {
+            $('.playButton').css('display', 'inline-block');
+            $('.pauseButton').css('display', 'none');
+        }
     },
 
     togglePause: function () {
@@ -5051,6 +5082,8 @@ PlayerView.prototype = {
 module.exports = PlayerView;
 
 },{"../../../bower_components/jquery/dist/jquery":1,"../../../bower_components/rdio-api/index.js":3,"../../../bower_components/underscore/underscore.js":4,"../Classes/Events.js":7}],13:[function(require,module,exports){
+'use strict';
+
 var $ = require('../../../bower_components/jquery/dist/jquery');
 var _ = require('../../../bower_components/underscore/underscore.js');
 
@@ -5061,8 +5094,8 @@ function VenueView(gigs) {
 VenueView.prototype = {
     render: function (track) {
         var trackKey = track.get('key');
-        var gig = _.find(this._gigs, function (gig) {
-            return trackKey == gig.trackKey;
+        var gig = _.find(this._gigs, function (_gig) {
+            return trackKey === _gig.trackKey;
         });
 
         $('.venue-artist-name').text(gig.artistName);
@@ -5077,7 +5110,10 @@ VenueView.prototype = {
 module.exports = VenueView;
 
 },{"../../../bower_components/jquery/dist/jquery":1,"../../../bower_components/underscore/underscore.js":4}],14:[function(require,module,exports){
+'use strict';
+
 var GigFm = require('./GigFm.js');
+
 window.gigFm = new GigFm();
 
 },{"./GigFm.js":9}]},{},[14]);
