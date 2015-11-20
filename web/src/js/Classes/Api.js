@@ -13,7 +13,8 @@ Api.prototype = {
     getTracksByLocation: function (lat, long) {
         var data = {
             lat: lat,
-            long: long
+            long: long,
+            popsort: 't'
         };
 
         return $.getJSON(this.url, data);

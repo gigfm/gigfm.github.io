@@ -15,10 +15,14 @@ function PlayerView(gigs) {
     this.$playButton = $('.player-play-button');
     this.$prevButton = $('.player-prev-button');
     this.$nextButton = $('.player-next-button');
+    this.$thumbDownButton = $('.thumbDownButton');
+    this.$thumbUpButton = $('.thumbUpButton');
 
     this.$playButton.click(this.onPlayButtonClick.bind(this));
     this.$prevButton.click(this.onPrevButtonClick.bind(this));
     this.$nextButton.click(this.onNextButtonClick.bind(this));
+    this.$thumbUpButton.click(this.onThumbUpClick.bind(this));
+    this.$thumbDownButton.click(this.onThumbDownClick.bind(this));
 
     R.ready(function () {
         R.player.on('change:playingTrack', self.onPlayingTrackChange.bind(self));
@@ -77,6 +81,24 @@ PlayerView.prototype = {
     onPlayButtonClick: function (event) {
         event.preventDefault();
         this.togglePause();
+    },
+
+
+    onThumbUpClick: function (event) {
+        event.preventDefault();
+        this.toggleThumb($(event.target));
+    },
+
+
+    onThumbDownClick: function (event) {
+        event.preventDefault();
+        this.toggleThumb($(event.target));
+    },
+
+
+    toggleThumb: function ($el) {
+        // @todo
+        $el.toggleClass('active-thumb');
     },
 
 
