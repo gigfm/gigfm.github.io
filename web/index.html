@@ -39,11 +39,11 @@
 	
 	
 	.buttons {
-    margin: 10px auto;
-    width: 293px;
-}
+        margin: 10px auto;
+        width: 350px;
+    }
 	
-	.thumbDownButton, .thumbUpButton, .playButton, .pauseButton, .skipButton, .volumePosition {
+	.thumbDownButton, .thumbUpButton, .playButton, .pauseButton, .backButton, .skipButton, .volumePosition {
         background-color: transparent;
         cursor: pointer;
     	display: inline-block;
@@ -73,9 +73,16 @@
     background-image: url("img/pause.png");
    
 }
+
+.backButton {
+    background-image: url("img/skip.png");
+    background-position: 15px 15px;
+    transform: rotate(0.5turn);
+
+}
+
 .skipButton {
     background-image: url("img/skip.png");
-   
 }
 .volumePosition {
     background-image: url("img/volume.png");
@@ -295,6 +302,7 @@
                     <div class="buttons">
                         <div class="thumbDownButton"><a href="#"></a></div>
                         <div class="thumbUpButton"><a href="#"></a></div>
+                        <div class="backButton player-prev-button"><a href="#"></a></div>
                         <div class="playButton player-play-button"><a href="#"></a></div>
                         <div class="pauseButton player-play-button"><a href="#"></a></div>
                         <div class="skipButton player-next-button"><a href="#"></a></div>
