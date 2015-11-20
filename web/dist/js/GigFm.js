@@ -4094,149 +4094,342 @@ module.exports = R;
 })(window.__rdio, window.rdioUtils);
 
 },{}],6:[function(require,module,exports){
+var $ = require('../../../bower_components/jquery/dist/jquery');
+
+function Api() {
+    //this.url = '//gigfmapp.herokuapp.com/api/getTracks';
+    this.url = 'data.json';
+}
+
+Api.prototype = {
+    getTracksByLocation: function (lat, long) {
+        var data = {
+            lat: lat,
+            long: long
+        };
+
+        return $.getJSON(this.url, data);
+    }
+};
+
+module.exports = Api;
+
+},{"../../../bower_components/jquery/dist/jquery":1}],7:[function(require,module,exports){
+var $ = require('../../../bower_components/jquery/dist/jquery');
+
+function Events() {
+    this._events = {};
+}
+
+Events.prototype = {
+    on: function (eventName, callback) {
+        if (!this._events[eventName]) {
+            this._events[eventName] = $.Callbacks();
+        }
+
+        this._events[eventName].add(callback);
+    },
+
+    removeEvent: function (eventName) {
+        if (!this._events[eventName]) {
+            return;
+        }
+
+        this._events[eventName] = null;
+    },
+
+    trigger: function (eventName) {
+        if (this._events[eventName]) {
+            this._events[eventName].fire();
+        }
+    }
+};
+
+module.exports = Events;
+
+},{"../../../bower_components/jquery/dist/jquery":1}],8:[function(require,module,exports){
+var $ = require('../../../bower_components/jquery/dist/jquery');
+
+function Location() {
+    this.options = {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0
+    };
+}
+
+Location.prototype = {
+    getLocation: function () {
+        this._deferred = new $.Deferred();
+
+        navigator.geolocation.getCurrentPosition(this.onGetCurrentPosition.bind(this), this.onGetCurrentPositionFail.bind(this), this.options);
+
+        return this._deferred.promise();
+    },
+
+    onGetCurrentPosition: function (pos) {
+        var crd = pos.coords;
+
+        this._deferred.resolve({
+            lat: crd.latitude,
+            long: crd.longitude,
+            accuracy: crd.accuracy
+        });
+    },
+
+    onGetCurrentPositionFail: function () {
+        // FAIL!!
+    }
+};
+
+module.exports = Location;
+
+},{"../../../bower_components/jquery/dist/jquery":1}],9:[function(require,module,exports){
 require('../../lib/modernizr.touch.js');
 var $ = require('../../bower_components/jquery/dist/jquery');
 var _ = require('../../bower_components/underscore/underscore.js');
-require('../../bower_components/rdio-api/index.js');
 require('../../lib/rdio-utils/rdio-utils.js');
 
-/*globals R, Main, Modernizr, rdioUtils */
+// Classes
+var Api = require('./Classes/Api.js');
+var Location = require('./Classes/Location.js');
+
+// Views
+var GigFmView = require('./Views/GigFmView.js');
+var VenueView = require('./Views/VenueView.js');
+var MoreGigsView = require('./Views/MoreGigsView.js');
+var PlayerView = require('./Views/PlayerView.js');
 
 function GigFm() {
-    if (!rdioUtils.startupChecks()) {
-        return;
+    this.view = new GigFmView();
+
+    if ("geolocation" in navigator) {
+        var location = new Location();
+        location.getLocation().done(this.onGetLocation.bind(this));
+    } else {
+        alert('Location information is not available');
     }
 
-    this.$input = $('.search input');
-    this.$results = $('.results');
+    R.ready(function () {
+        R.player.on('change:playingSource', function () {
+            console.log(111);
+        });
 
-    var rawTemplate = $.trim($('#album-template').text());
-    this.albumTemplate = _.template(rawTemplate);
+        R.player.on('change:playingTrack', function () {
+            console.log(222);
+        });
 
-    R.ready($.proxy(this.onReady, this));
+        R.player.on('change:playState', function () {
+            console.log(333);
+        });
+    });
 }
 
 GigFm.prototype = {
+    onGetLocation: function (loc) {
+        var api = new Api();
 
-    onReady: function () {
-        var self = this;
-        this.bindEvents();
-
-        return R.request({
-            method: 'getTopCharts',
-            content: {
-                type: 'Album'
-            },
-            success: function (response) {
-                self.showResults(response.result);
-            },
-            error: function (response) {
-                $('.error').text(response.message);
-            }
-        });
+        var l = api.getTracksByLocation(loc.lat, loc.long).done(this.onApiSuccess).fail(this.onApiFail);
     },
 
-    bindEvents: function () {
-        var self = this;
-        var $play = $('.header .play').click(function () {
-            R.player.togglePause();
-        });
+    onApiSuccess: function (response) {
+        var gig;
+        var playerView = this.PlayerView = new PlayerView();
+        var moreGigsView = this.MoreGigsView = new MoreGigsView();
+        var venueView = this.VenueView = new VenueView();
 
-        if (Modernizr.touch) {
-            self.$results.click(function () {
-                $('.album').removeClass('hover');
+        if (response && $.isArray(response)) {
+            moreGigsView.render(response);
+
+            playerView.setGigs(response).done(function () {
+                gig = playerView.play();
+                venueView.render(gig);
             });
         } else {
-            _.defer(function () {
-                self.$input.focus();
-            });
+            // The response object is improperly formatted
         }
-
-        $('.search').submit(function (event) {
-            event.preventDefault();
-            var query = self.$input.val();
-            if (query) {
-                R.ready(function () {
-                    // just in case the API isn't ready yet
-                    self.search(query);
-                });
-            }
-        });
-
-        $('.header .next').click(function () {
-            R.player.next();
-        });
-
-        $('.header .prev').click(function () {
-            R.player.previous();
-        });
-
-        R.player.on('change:playingTrack', function (track) {
-            $('.header .icon').attr('src', track.get('icon'));
-            $('.header .track').text('Track: ' + track.get('name'));
-            $('.header .album-title').text('Album: ' + track.get('album'));
-            $('.header .artist').text('Artist: ' + track.get('artist'));
-        });
-
-        R.player.on('change:playState', function (state) {
-            if (state === R.player.PLAYSTATE_PLAYING || state === R.player.PLAYSTATE_BUFFERING) {
-                $play.text('pause');
-            } else {
-                $play.text('play');
-            }
-        });
     },
 
-    search: function (query) {
-        var self = this;
-        R.request({
-            method: 'search',
-            content: {
-                query: query,
-                types: 'Album'
-            },
-            success: function (response) {
-                self.$input.val('');
-                self.showResults(response.result.results);
-            },
-            error: function (response) {
-                $('.error').text(response.message);
-            }
-        });
-    },
-
-    showResults: function (albums) {
-        var self = this;
-        this.$results.empty();
-
-        _.each(albums, function (album) {
-            album.appUrl = album.shortUrl.replace('http', 'rdio');
-            var $el = $(self.albumTemplate(album)).appendTo(self.$results);
-
-            var $cover = $el.find('.icon');
-            if (Modernizr.touch) {
-                $cover.click(function (event) {
-                    event.stopPropagation();
-                    if (!$el.hasClass('hover')) {
-                        $('.album').not($el).removeClass('hover');
-                        $el.addClass('hover');
-                    }
-                });
-            } else {
-                $cover.hover(function () {
-                    $el.addClass('hover');
-                }, function () {
-                    $el.removeClass('hover');
-                });
-            }
-
-            $el.find('.play').click(function () {
-                R.player.play({ source: album.key });
-            });
-        });
+    onApiFail: function (response) {
+        // HTTP ERROR
     }
 };
 
 window.GigFm = GigFm;
 
-},{"../../bower_components/jquery/dist/jquery":1,"../../bower_components/rdio-api/index.js":2,"../../bower_components/underscore/underscore.js":3,"../../lib/modernizr.touch.js":4,"../../lib/rdio-utils/rdio-utils.js":5}]},{},[6]);
+},{"../../bower_components/jquery/dist/jquery":1,"../../bower_components/underscore/underscore.js":3,"../../lib/modernizr.touch.js":4,"../../lib/rdio-utils/rdio-utils.js":5,"./Classes/Api.js":6,"./Classes/Location.js":8,"./Views/GigFmView.js":10,"./Views/MoreGigsView.js":11,"./Views/PlayerView.js":12,"./Views/VenueView.js":13}],10:[function(require,module,exports){
+/* global R */
+require('../../../bower_components/rdio-api/index.js');
+
+var $ = require('../../../bower_components/jquery/dist/jquery');
+
+function GigFmView() {
+    R.ready(function () {
+        $('.username').text(R.currentUser.get('firstName'));
+    });
+}
+
+module.exports = GigFmView;
+
+},{"../../../bower_components/jquery/dist/jquery":1,"../../../bower_components/rdio-api/index.js":2}],11:[function(require,module,exports){
+var $ = require('../../../bower_components/jquery/dist/jquery');
+var _ = require('../../../bower_components/underscore/underscore.js');
+
+function MoreGigsView() {}
+
+MoreGigsView.prototype = {
+    render: function (data) {
+        var htmlArray = _.map(data, function (trackData) {
+            return '';
+        });
+
+        htmlArray.unshift('<ul class="more-gigs-list">');
+        htmlArray.push('</ul>');
+
+        return $('.more-gigs').html(htmlArray.join(''));
+    }
+};
+
+module.exports = MoreGigsView;
+
+},{"../../../bower_components/jquery/dist/jquery":1,"../../../bower_components/underscore/underscore.js":3}],12:[function(require,module,exports){
+/* global R */
+require('../../../bower_components/rdio-api/index.js');
+
+var $ = require('../../../bower_components/jquery/dist/jquery');
+var Events = require('../Classes/Events.js');
+
+function PlayerView() {
+    var self = this;
+
+    this._gigs = [];
+
+    this.$playButton = $('.player-play-button');
+    this.$prevButton = $('.player-prev-button');
+    this.$nextButton = $('.player-next-button');
+
+    this.$playButton.click(this.onPlayButtonClick.bind(this));
+    this.$prevButton.click(this.onPrevButtonClick.bind(this));
+    this.$nextButton.click(this.onNextButtonClick.bind(this));
+
+    R.ready(function () {
+        R.player.on('change:playingTrack', self.onPlayingTrackChange.bind(self));
+        R.player.on('change:playState', self.onPlayStateChange.bind(self));
+    });
+
+    $.extend(this, new Events());
+}
+
+PlayerView.prototype = {
+
+    onPlayingTrackChange: function (track) {
+        this.renderTrackInfo(track);
+    },
+
+    onPlayStateChange: function (state) {
+        if (state === R.player.PLAYSTATE_PLAYING || state === R.player.PLAYSTATE_BUFFERING) {
+            this.renderState('pause');
+        } else {
+            this.renderState('play');
+        }
+    },
+
+    onPrevButtonClick: function (event) {
+        event.preventDefault();
+        this.playPrevious();
+    },
+
+    onNextButtonClick: function (event) {
+        event.preventDefault();
+        this.playNext();
+    },
+
+    onPlayButtonClick: function (event) {
+        event.preventDefault();
+        this.togglePause();
+    },
+
+    renderTrackInfo: function (track) {
+        $('.player-track-image').attr('src', track.get('icon'));
+        $('.player-track-name').text(track.get('name'));
+        $('.player-track-artist').text(track.get('artist'));
+        $('.player-track-album').text(track.get('album'));
+    },
+
+    renderState: function (state) {
+        $('.play-button').text(state);
+    },
+
+    setGigs: function (gigs) {
+        var self = this;
+        var deferred = $.Deferred();
+
+        $.each(gigs, function (index, gig) {
+            self._gigs[gig.trackKey] = gig;
+        });
+
+        R.ready(function () {
+            $.each(gigs, function (index, gig) {
+                R.player.queue.add(gig.trackKey);
+            });
+
+            R.player.queue.on('add', function (model, collection, info) {
+                if (gigs.length > 5 || gigs.length == collection.length && deferred.state() != 'resolved') {
+                    deferred.resolve(collection);
+                }
+            });
+        });
+
+        return deferred.promise();
+    },
+
+    togglePause: function () {
+        R.ready(function () {
+            R.player.togglePause();
+        });
+    },
+
+    playNext: function () {
+        R.ready(function () {
+            R.player.next();
+        });
+    },
+
+    playPrevious: function () {
+        R.ready(function () {
+            R.player.previous();
+        });
+    },
+
+    play: function () {
+        var source;
+
+        R.ready(function () {
+            R.player.play();
+            source = R.player.playingSource();
+        });
+
+        return this._gigs[source];
+    }
+};
+
+module.exports = PlayerView;
+
+},{"../../../bower_components/jquery/dist/jquery":1,"../../../bower_components/rdio-api/index.js":2,"../Classes/Events.js":7}],13:[function(require,module,exports){
+var $ = require('../../../bower_components/jquery/dist/jquery');
+
+function VenueView() {}
+
+VenueView.prototype = {
+    render: function (gig) {
+        $('.venue-artist-name').text('');
+        $('.venue-show-date').text('');
+        $('.venue-name').text('');
+        $('.venue-show-location').text('');
+        $('.venue-buy-tickets-link').attr('src', '');
+    }
+};
+
+module.exports = VenueView;
+
+},{"../../../bower_components/jquery/dist/jquery":1}]},{},[9]);

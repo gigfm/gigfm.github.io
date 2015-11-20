@@ -17,8 +17,21 @@ module.exports = function (grunt) {
                     "./web/dist/js/GigFm.js": ["./web/src/js/GigFm.js"]
                 }
             }
+
+            , alt: {
+                options: {
+                    transform: [
+                        ["babelify", {
+                            babelrc: "conf/.babelrc"
+                        }]
+                    ]
+                },
+                files: {
+                    "./web/dist/js/GigFm.js": ["./web/src/js/GigFm_alt.js"]
+                }
+            }
         }
     });
 
-    grunt.registerTask('default', ['browserify']);
+    grunt.registerTask('default', ['browserify:dist']);
 };

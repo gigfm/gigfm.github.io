@@ -23,28 +23,22 @@
     </script>
 </head>
 <body>
+
 <div class="header">
     <div class="section">
-        <img class="icon">
+        <img class="icon player-track-image">
+    </div>
+    <div class="section player">
+        <button class="play player-play-button">play</button>
+        <button class="next player-next-button">next</button>
+        <button class="prev player-prev-button">previous</button>
     </div>
     <div class="section">
-        <button class="play">play</button>
-        <button class="next">next</button>
-        <button class="prev">previous</button>
-    </div>
-    <div class="section">
-        <div class="track label">Not Playing</div>
-        <div class="album-title label"></div>
-        <div class="artist label"></div>
+        <div class="track player-track-name label">Not Playing</div>
+        <div class="album-title player-track-album label"></div>
+        <div class="artist player-track-artist label"></div>
     </div>
 </div>
-<form class="search">
-    Enter an artist or album name:
-    <input type="text"/>
-    <button type="submit">Search</button>
-    <div class="error"></div>
-</form>
-<div class="results"></div>
 
 <script src="dist/js/GigFm.js"></script>
 <script>

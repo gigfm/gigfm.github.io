@@ -1,156 +1,75 @@
 require('../../lib/modernizr.touch.js');
 var $ = require('../../bower_components/jquery/dist/jquery');
 var _ = require('../../bower_components/underscore/underscore.js');
-require('../../bower_components/rdio-api/index.js');
 require('../../lib/rdio-utils/rdio-utils.js');
 
-/*globals R, Main, Modernizr, rdioUtils */
+// Classes
+var Api = require('./Classes/Api.js');
+var Location = require('./Classes/Location.js');
+
+// Views
+var GigFmView = require('./Views/GigFmView.js');
+var VenueView = require('./Views/VenueView.js');
+var MoreGigsView = require('./Views/MoreGigsView.js');
+var PlayerView = require('./Views/PlayerView.js');
 
 function GigFm () {
-    if (!rdioUtils.startupChecks()) {
-        return;
+    this.view = new GigFmView();
+
+    if ("geolocation" in navigator) {
+        var location = new Location();
+        location.getLocation().done(this.onGetLocation.bind(this));
+    } else {
+        alert('Location information is not available');
     }
 
-    this.$input = $('.search input');
-    this.$results = $('.results');
+    R.ready(function () {
+        R.player.on('change:playingSource', function () {
+            console.log(111);
+        });
 
-    var rawTemplate = $.trim($('#album-template').text());
-    this.albumTemplate = _.template(rawTemplate);
+        R.player.on('change:playingTrack', function () {
+            console.log(222);
+        });
 
-    R.ready($.proxy(this.onReady, this));
+        R.player.on('change:playState', function () {
+            console.log(333);
+        });
+    });
 }
 
 
 GigFm.prototype = {
+    onGetLocation: function (loc) {
+        var api = new Api();
 
-    onReady: function () {
-        var self = this;
-        this.bindEvents();
-
-        return R.request({
-            method: 'getTopCharts',
-            content: {
-                type: 'Album'
-            },
-            success: function(response) {
-                self.showResults(response.result);
-            },
-            error: function(response) {
-                $('.error').text(response.message);
-            }
-        });
-    },
+        var l =  api.getTracksByLocation(loc.lat, loc.long)
+            .done(this.onApiSuccess)
+            .fail(this.onApiFail);
+    }
 
 
+    , onApiSuccess: function (response) {
+        var gig;
+        var playerView = this.PlayerView = new PlayerView();
+        var moreGigsView = this.MoreGigsView = new MoreGigsView();
+        var venueView = this.VenueView = new VenueView();
 
+        if (response && $.isArray(response)) {
+            moreGigsView.render(response);
 
-    bindEvents: function () {
-        var self = this;
-        var $play = $('.header .play')
-            .click(function() {
-                R.player.togglePause();
+            playerView.setGigs(response).done(function () {
+                gig = playerView.play();
+                venueView.render(gig);
             });
-
-
-        if (Modernizr.touch) {
-            self.$results
-                .click(function() {
-                    $('.album').removeClass('hover');
-                });
         } else {
-            _.defer(function() {
-                self.$input.focus();
-            });
+            // The response object is improperly formatted
         }
-
-        $('.search')
-            .submit(function(event) {
-                event.preventDefault();
-                var query = self.$input.val();
-                if (query) {
-                    R.ready(function() { // just in case the API isn't ready yet
-                        self.search(query);
-                    });
-                }
-            });
-
-        $('.header .next')
-            .click(function() {
-                R.player.next();
-            });
-
-        $('.header .prev')
-            .click(function() {
-                R.player.previous();
-            });
-
-        R.player.on('change:playingTrack', function(track) {
-            $('.header .icon').attr('src', track.get('icon'));
-            $('.header .track').text('Track: ' + track.get('name'));
-            $('.header .album-title').text('Album: ' + track.get('album'));
-            $('.header .artist').text('Artist: ' + track.get('artist'));
-        });
-
-        R.player.on('change:playState', function(state) {
-            if (state === R.player.PLAYSTATE_PLAYING || state === R.player.PLAYSTATE_BUFFERING) {
-                $play.text('pause');
-            } else {
-                $play.text('play');
-            }
-        });
-    },
-
-    search: function(query) {
-        var self = this;
-
-        return R.request({
-            method: 'search',
-            content: {
-                query: query,
-                types: 'Album'
-            },
-            success: function(response) {
-                self.$input.val('');
-                self.showResults(response.result.results);
-            },
-            error: function(response) {
-                $('.error').text(response.message);
-            }
-        });
-    },
+    }
 
 
-    showResults: function(albums) {
-        var self = this;
-        this.$results.empty();
-
-        _.each(albums, function(album) {
-            album.appUrl = album.shortUrl.replace('http', 'rdio');
-            var $el = $(self.albumTemplate(album))
-                .appendTo(self.$results);
-
-            var $cover = $el.find('.icon');
-            if (Modernizr.touch) {
-                $cover.click(function(event) {
-                    event.stopPropagation();
-                    if (!$el.hasClass('hover')) {
-                        $('.album').not($el).removeClass('hover');
-                        $el.addClass('hover');
-                    }
-                });
-            } else {
-                $cover.hover(function() {
-                    $el.addClass('hover');
-                }, function() {
-                    $el.removeClass('hover');
-                });
-            }
-
-            $el.find('.play')
-                .click(function() {
-                    R.player.play({source: album.key});
-                });
-        });
+    , onApiFail: function (response) {
+        // HTTP ERROR
     }
 };
 
