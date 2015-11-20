@@ -6,6 +6,7 @@ var Mustache = require('../../../bower_components/mustache.js/mustache.js');
 
 function MoreGigsView(gigs) {
     var tracks  = {};
+    var self = this;
 
     this.template = $('#gig-template').html();
     Mustache.parse(this.template);
@@ -21,18 +22,11 @@ function MoreGigsView(gigs) {
     $.extend(this, new Events());
 
     $('.change-location').click(function (event) {
-        var latlong = $(event.target).data('latlong');
-        var $currentLocation = $('.current-location');
+        event.preventDefault();
+        var latlong = $(event.target).data('latlong').split(',');
 
-        $.getJSON('http://maps.googleapis.com/maps/api/geocode/json', {
-            latlng: latlong
-        }).done(function (response) {
-            if (response && response.results) {
-                var location = response.results[3].address_components[0].long_name;
-                $currentLocation.text(location);
-            }
-        });
-
+        self.trigger('change:location', latlong[0], latlong[1]);
+        $('#changeLocationModal').modal('hide');
     });
 }
 

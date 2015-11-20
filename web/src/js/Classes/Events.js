@@ -28,9 +28,9 @@ Events.prototype = {
     },
 
 
-    trigger: function (eventName, arg) {
+    trigger: function (eventName, arg1, arg2) {
         if (this._events[eventName]) {
-            this._events[eventName].fire(arg);
+            this._events[eventName].fire(arg1, arg2);
         }
     }
 };

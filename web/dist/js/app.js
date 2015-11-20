@@ -6816,9 +6816,9 @@ Events.prototype = {
         this._events[eventName] = null;
     },
 
-    trigger: function (eventName, arg) {
+    trigger: function (eventName, arg1, arg2) {
         if (this._events[eventName]) {
-            this._events[eventName].fire(arg);
+            this._events[eventName].fire(arg1, arg2);
         }
     }
 };
@@ -6895,18 +6895,17 @@ function GigFm() {
 
 GigFm.prototype = {
     onGetLocation: function (loc) {
+        this.setLocation(loc.lat, loc.long);
+    },
+
+    setLocation: function (lat, long) {
         var api = new Api();
         var $currentLocation = $('.current-location');
 
-        loc = {
-            lat: '40.714224',
-            long: '-73.961452'
-        };
-
-        api.getTracksByLocation(loc.lat, loc.long).done(this.onApiSuccess.bind(this)).fail(this.onApiFail.bind(this));
+        api.getTracksByLocation(lat, long).done(this.onApiSuccess.bind(this)).fail(this.onApiFail.bind(this));
 
         $.getJSON('http://maps.googleapis.com/maps/api/geocode/json', {
-            latlng: loc.lat + ',' + loc.long
+            latlng: lat + ',' + long
         }).done(function (response) {
             if (response && response.results) {
                 var location = response.results[3].address_components[0].long_name;
@@ -6927,12 +6926,17 @@ GigFm.prototype = {
             this.venueView = new VenueView(response);
 
             playerView.on('change:playing-track', this.onPlayingTrackChange.bind(this));
+            moreGigsView.on('change:location', this.onLocationChange.bind(this));
             moreGigsView.on('request:play-track', this.onPlayTrackRequest.bind(this));
 
             playerView.play();
         } else {
             alert('Invalid data from gigFm.');
         }
+    },
+
+    onLocationChange: function (lat, long) {
+        this.setLocation(lat, long);
     },
 
     onPlayingTrackChange: function (track) {
@@ -7006,6 +7010,7 @@ var Mustache = require('../../../bower_components/mustache.js/mustache.js');
 
 function MoreGigsView(gigs) {
     var tracks = {};
+    var self = this;
 
     this.template = $('#gig-template').html();
     Mustache.parse(this.template);
@@ -7021,17 +7026,11 @@ function MoreGigsView(gigs) {
     $.extend(this, new Events());
 
     $('.change-location').click(function (event) {
-        var latlong = $(event.target).data('latlong');
-        var $currentLocation = $('.current-location');
+        event.preventDefault();
+        var latlong = $(event.target).data('latlong').split(',');
 
-        $.getJSON('http://maps.googleapis.com/maps/api/geocode/json', {
-            latlng: latlong
-        }).done(function (response) {
-            if (response && response.results) {
-                var location = response.results[3].address_components[0].long_name;
-                $currentLocation.text(location);
-            }
-        });
+        self.trigger('change:location', latlong[0], latlong[1]);
+        $('#changeLocationModal').modal('hide');
     });
 }
 

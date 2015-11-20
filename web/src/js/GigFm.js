@@ -31,20 +31,20 @@ function GigFm() {
 
 GigFm.prototype = {
     onGetLocation: function (loc) {
+        this.setLocation(loc.lat, loc.long);
+    },
+
+
+    setLocation: function (lat, long) {
         var api = new Api();
         var $currentLocation = $('.current-location');
 
-        loc = {
-            lat: '40.714224'
-            , long: '-73.961452'
-        };
-
-        api.getTracksByLocation(loc.lat, loc.long)
+        api.getTracksByLocation(lat, long)
             .done(this.onApiSuccess.bind(this))
             .fail(this.onApiFail.bind(this));
 
         $.getJSON('http://maps.googleapis.com/maps/api/geocode/json', {
-           latlng: loc.lat + ',' + loc.long
+            latlng: lat + ',' + long
         }).done(function (response) {
             if (response && response.results) {
                 var location = response.results[3].address_components[0].long_name;
@@ -66,12 +66,18 @@ GigFm.prototype = {
             this.venueView = new VenueView(response);
 
             playerView.on('change:playing-track', this.onPlayingTrackChange.bind(this));
+            moreGigsView.on('change:location', this.onLocationChange.bind(this));
             moreGigsView.on('request:play-track', this.onPlayTrackRequest.bind(this));
 
             playerView.play();
         } else {
             alert('Invalid data from gigFm.');
         }
+    },
+
+
+    onLocationChange: function (lat, long) {
+        this.setLocation(lat, long);
     },
 
 

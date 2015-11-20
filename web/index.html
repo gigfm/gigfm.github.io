@@ -349,6 +349,7 @@
     color: #d6deea;
     font-size: 10px;
     letter-spacing: 0.1em;
+    cursor: pointer;
 }
 
 @media only screen and (max-width : 990px) {
@@ -448,13 +449,13 @@
             	</div>
                 
                 <div id="relatedGigs">
-                        <div class="relatedHeader"> Related gigs near you (<span class="current-location"></span>) <span data-toggle="modal" href="#" data-target="#myModal" class="changeLocation">change location</span></div>
+                        <div class="relatedHeader"> Related gigs near you (<span class="current-location"></span>) <span data-toggle="modal" href="#" data-target="#changeLocationModal" class="changeLocation">change location</span></div>
                         <!--<div class="moreGigs">View more gigs <div class="viewMoregigs"></div></div>-->
                         <div class="gigsWrapper"></div>
                 </div>
 
                 <!-- Modal -->
-                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal fade" id="changeLocationModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -462,8 +463,8 @@
                                 <h4 class="modal-title" id="myModalLabel">Change Location</h4>
                             </div>
                             <div class="modal-body">
-                                <div data-latlong="40.714224,-73.961452" class="change-location"><a href="#" >Brooklyn</a></div>
-                                <div data-latlong="30.0221731,-90.0235116" class="change-location"><a href="#" >New Orleans</a></div>
+                                <div><a href="#" data-latlong="40.714224,-73.961452" class="change-location">Brooklyn</a></div>
+                                <div><a href="#" data-latlong="30.0221731,-90.0235116" class="change-location">New Orleans</a></div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
