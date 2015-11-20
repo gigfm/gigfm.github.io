@@ -8,30 +8,26 @@ module.exports = function (grunt) {
             dist: {
                 options: {
                     transform: [
-                        ["babelify", {
-                            babelrc: "conf/.babelrc"
+                        ['babelify', {
+                            babelrc: 'conf/.babelrc'
                         }]
                     ]
                 },
                 files: {
-                    "./web/dist/js/GigFm.js": ["./web/src/js/GigFm.js"]
+                    './web/dist/js/app.js': ['./web/src/js/app.js']
                 }
             }
+        },
 
-            , alt: {
-                options: {
-                    transform: [
-                        ["babelify", {
-                            babelrc: "conf/.babelrc"
-                        }]
-                    ]
-                },
-                files: {
-                    "./web/dist/js/GigFm.js": ["./web/src/js/GigFm_alt.js"]
-                }
-            }
+
+        eslint: {
+            options: {
+                configFile: 'conf/.eslintrc'
+            },
+            target: ['web/src/js/**/*.js']
         }
     });
 
     grunt.registerTask('default', ['browserify:dist']);
+    grunt.registerTask('test', ['eslint']);
 };

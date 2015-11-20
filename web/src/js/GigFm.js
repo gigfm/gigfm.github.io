@@ -1,6 +1,8 @@
-require('../../lib/modernizr.touch.js');
+'use strict';
+
+
 var $ = require('../../bower_components/jquery/dist/jquery');
-var _ = require('../../bower_components/underscore/underscore.js');
+
 require('../../lib/rdio-utils/rdio-utils.js');
 
 // Classes
@@ -13,29 +15,15 @@ var VenueView = require('./Views/VenueView.js');
 var MoreGigsView = require('./Views/MoreGigsView.js');
 var PlayerView = require('./Views/PlayerView.js');
 
-function GigFm () {
-    this.view = new GigFmView();
 
-    if ("geolocation" in navigator) {
+function GigFm() {
+    if ('geolocation' in navigator) {
         var location = new Location();
+
         location.getLocation().done(this.onGetLocation.bind(this));
     } else {
-        alert('Location information is not available');
+        alert('Location information is not available.');
     }
-
-    R.ready(function () {
-        R.player.on('change:playingSource', function () {
-            console.log(111);
-        });
-
-        R.player.on('change:playingTrack', function () {
-            console.log(222);
-        });
-
-        R.player.on('change:playState', function () {
-            console.log(333);
-        });
-    });
 }
 
 
@@ -43,34 +31,48 @@ GigFm.prototype = {
     onGetLocation: function (loc) {
         var api = new Api();
 
-        var l =  api.getTracksByLocation(loc.lat, loc.long)
-            .done(this.onApiSuccess)
-            .fail(this.onApiFail);
-    }
+        api.getTracksByLocation(loc.lat, loc.long)
+            .done(this.onApiSuccess.bind(this))
+            .fail(this.onApiFail.bind(this));
+    },
 
 
-    , onApiSuccess: function (response) {
-        var gig;
-        var playerView = this.PlayerView = new PlayerView();
-        var moreGigsView = this.MoreGigsView = new MoreGigsView();
-        var venueView = this.VenueView = new VenueView();
+    onApiSuccess: function (response) {
+        var playerView;
+        var moreGigsView;
+
+        this.view = new GigFmView();
 
         if (response && $.isArray(response)) {
-            moreGigsView.render(response);
+            playerView = this.playerView = new PlayerView(response);
+            moreGigsView = this.moreGigsView = new MoreGigsView(response);
+            this.venueView = new VenueView(response);
 
-            playerView.setGigs(response).done(function () {
-                gig = playerView.play();
-                venueView.render(gig);
-            });
+            playerView.on('change:playing-track', this.onPlayingTrackChange.bind(this));
+            moreGigsView.on('request:play-track', this.onPlayTrackRequest.bind(this));
+
+            playerView.play();
         } else {
-            // The response object is improperly formatted
+            alert('Invalid data from gigFm.');
         }
-    }
+    },
 
 
-    , onApiFail: function (response) {
-        // HTTP ERROR
+    onPlayingTrackChange: function (track) {
+        this.view.render();
+        this.venueView.render(track);
+    },
+
+
+    onPlayTrackRequest: function (trackKey) {
+        this.playerView.playTrack(trackKey);
+    },
+
+
+    onApiFail: function () {
+        alert('Failed fetching data from gigFm.');
     }
 };
 
-window.GigFm = GigFm;
+
+module.exports = GigFm;

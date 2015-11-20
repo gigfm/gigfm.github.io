@@ -3698,111 +3698,6 @@ module.exports = R;
 }).call(this);
 
 },{}],5:[function(require,module,exports){
-/* Modernizr 2.6.2 (Custom Build) | MIT & BSD
- * Build: http://modernizr.com/download/#-touch-shiv-cssclasses-teststyles-prefixes
- */
-;window.Modernizr = (function (a, b, c) {
-  function w(a) {
-    j.cssText = a;
-  }function x(a, b) {
-    return w(m.join(a + ";") + (b || ""));
-  }function y(a, b) {
-    return typeof a === b;
-  }function z(a, b) {
-    return !! ~("" + a).indexOf(b);
-  }function A(a, b, d) {
-    for (var e in a) {
-      var f = b[a[e]];if (f !== c) return d === !1 ? a[e] : y(f, "function") ? f.bind(d || b) : f;
-    }return !1;
-  }var d = "2.6.2",
-      e = {},
-      f = !0,
-      g = b.documentElement,
-      h = "modernizr",
-      i = b.createElement(h),
-      j = i.style,
-      k,
-      l = ({}).toString,
-      m = " -webkit- -moz- -o- -ms- ".split(" "),
-      n = {},
-      o = {},
-      p = {},
-      q = [],
-      r = q.slice,
-      s,
-      t = function (a, c, d, e) {
-    var f,
-        i,
-        j,
-        k,
-        l = b.createElement("div"),
-        m = b.body,
-        n = m || b.createElement("body");if (parseInt(d, 10)) while (d--) j = b.createElement("div"), j.id = e ? e[d] : h + (d + 1), l.appendChild(j);return f = ["&#173;", '<style id="s', h, '">', a, "</style>"].join(""), l.id = h, (m ? l : n).innerHTML += f, n.appendChild(l), m || (n.style.background = "", n.style.overflow = "hidden", k = g.style.overflow, g.style.overflow = "hidden", g.appendChild(n)), i = c(l, a), m ? l.parentNode.removeChild(l) : (n.parentNode.removeChild(n), g.style.overflow = k), !!i;
-  },
-      u = ({}).hasOwnProperty,
-      v;!y(u, "undefined") && !y(u.call, "undefined") ? v = function (a, b) {
-    return u.call(a, b);
-  } : v = function (a, b) {
-    return b in a && y(a.constructor.prototype[b], "undefined");
-  }, Function.prototype.bind || (Function.prototype.bind = function (b) {
-    var c = this;if (typeof c != "function") throw new TypeError();var d = r.call(arguments, 1),
-        e = function () {
-      if (this instanceof e) {
-        var a = function () {};a.prototype = c.prototype;var f = new a(),
-            g = c.apply(f, d.concat(r.call(arguments)));return Object(g) === g ? g : f;
-      }return c.apply(b, d.concat(r.call(arguments)));
-    };return e;
-  }), n.touch = function () {
-    var c;return "ontouchstart" in a || a.DocumentTouch && b instanceof DocumentTouch ? c = !0 : t(["@media (", m.join("touch-enabled),("), h, ")", "{#modernizr{top:9px;position:absolute}}"].join(""), function (a) {
-      c = a.offsetTop === 9;
-    }), c;
-  };for (var B in n) v(n, B) && (s = B.toLowerCase(), e[s] = n[B](), q.push((e[s] ? "" : "no-") + s));return e.addTest = function (a, b) {
-    if (typeof a == "object") for (var d in a) v(a, d) && e.addTest(d, a[d]);else {
-      a = a.toLowerCase();if (e[a] !== c) return e;b = typeof b == "function" ? b() : b, typeof f != "undefined" && f && (g.className += " " + (b ? "" : "no-") + a), e[a] = b;
-    }return e;
-  }, w(""), i = k = null, (function (a, b) {
-    function k(a, b) {
-      var c = a.createElement("p"),
-          d = a.getElementsByTagName("head")[0] || a.documentElement;return c.innerHTML = "x<style>" + b + "</style>", d.insertBefore(c.lastChild, d.firstChild);
-    }function l() {
-      var a = r.elements;return typeof a == "string" ? a.split(" ") : a;
-    }function m(a) {
-      var b = i[a[g]];return b || (b = {}, h++, a[g] = h, i[h] = b), b;
-    }function n(a, c, f) {
-      c || (c = b);if (j) return c.createElement(a);f || (f = m(c));var g;return f.cache[a] ? g = f.cache[a].cloneNode() : e.test(a) ? g = (f.cache[a] = f.createElem(a)).cloneNode() : g = f.createElem(a), g.canHaveChildren && !d.test(a) ? f.frag.appendChild(g) : g;
-    }function o(a, c) {
-      a || (a = b);if (j) return a.createDocumentFragment();c = c || m(a);var d = c.frag.cloneNode(),
-          e = 0,
-          f = l(),
-          g = f.length;for (; e < g; e++) d.createElement(f[e]);return d;
-    }function p(a, b) {
-      b.cache || (b.cache = {}, b.createElem = a.createElement, b.createFrag = a.createDocumentFragment, b.frag = b.createFrag()), a.createElement = function (c) {
-        return r.shivMethods ? n(c, a, b) : b.createElem(c);
-      }, a.createDocumentFragment = Function("h,f", "return function(){var n=f.cloneNode(),c=n.createElement;h.shivMethods&&(" + l().join().replace(/\w+/g, function (a) {
-        return b.createElem(a), b.frag.createElement(a), 'c("' + a + '")';
-      }) + ");return n}")(r, b.frag);
-    }function q(a) {
-      a || (a = b);var c = m(a);return r.shivCSS && !f && !c.hasCSS && (c.hasCSS = !!k(a, "article,aside,figcaption,figure,footer,header,hgroup,nav,section{display:block}mark{background:#FF0;color:#000}")), j || p(a, c), a;
-    }var c = a.html5 || {},
-        d = /^<|^(?:button|map|select|textarea|object|iframe|option|optgroup)$/i,
-        e = /^(?:a|b|code|div|fieldset|h1|h2|h3|h4|h5|h6|i|label|li|ol|p|q|span|strong|style|table|tbody|td|th|tr|ul)$/i,
-        f,
-        g = "_html5shiv",
-        h = 0,
-        i = {},
-        j;(function () {
-      try {
-        var a = b.createElement("a");a.innerHTML = "<xyz></xyz>", f = "hidden" in a, j = a.childNodes.length == 1 || (function () {
-          b.createElement("a");var a = b.createDocumentFragment();return typeof a.cloneNode == "undefined" || typeof a.createDocumentFragment == "undefined" || typeof a.createElement == "undefined";
-        })();
-      } catch (c) {
-        f = !0, j = !0;
-      }
-    })();var r = { elements: c.elements || "abbr article aside audio bdi canvas data datalist details figcaption figure footer header hgroup mark meter nav output progress section summary time video", shivCSS: c.shivCSS !== !1, supportsUnknownElements: j, shivMethods: c.shivMethods !== !1, type: "default", shivDocument: q, createElement: n, createDocumentFragment: o };a.html5 = r, q(b);
-  })(this, b), e._version = d, e._prefixes = m, e.testStyles = t, g.className = g.className.replace(/(^|\s)no-js(\s|$)/, "$1$2") + (f ? " js " + q.join(" ") : ""), e;
-})(window, window.document);
-
-},{}],6:[function(require,module,exports){
 //! rdioUtils 0.0.8
 //! Built on 2013-11-27
 //! https://github.com/rdio/jsapi-examples/tree/master/utils
@@ -4696,7 +4591,7 @@ module.exports = R;
   };
 })(window.__rdio, window.rdioUtils);
 
-},{}],7:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var $ = require('../../../bower_components/jquery/dist/jquery');
 
 function Api() {
@@ -4717,7 +4612,7 @@ Api.prototype = {
 
 module.exports = Api;
 
-},{"../../../bower_components/jquery/dist/jquery":1}],8:[function(require,module,exports){
+},{"../../../bower_components/jquery/dist/jquery":1}],7:[function(require,module,exports){
 var $ = require('../../../bower_components/jquery/dist/jquery');
 
 function Events() {
@@ -4750,7 +4645,7 @@ Events.prototype = {
 
 module.exports = Events;
 
-},{"../../../bower_components/jquery/dist/jquery":1}],9:[function(require,module,exports){
+},{"../../../bower_components/jquery/dist/jquery":1}],8:[function(require,module,exports){
 var $ = require('../../../bower_components/jquery/dist/jquery');
 
 function Location() {
@@ -4787,8 +4682,7 @@ Location.prototype = {
 
 module.exports = Location;
 
-},{"../../../bower_components/jquery/dist/jquery":1}],10:[function(require,module,exports){
-require('../../lib/modernizr.touch.js');
+},{"../../../bower_components/jquery/dist/jquery":1}],9:[function(require,module,exports){
 var $ = require('../../bower_components/jquery/dist/jquery');
 var _ = require('../../bower_components/underscore/underscore.js');
 require('../../lib/rdio-utils/rdio-utils.js');
@@ -4855,9 +4749,9 @@ GigFm.prototype = {
     }
 };
 
-window.GigFm = GigFm;
+module.exports = GigFm;
 
-},{"../../bower_components/jquery/dist/jquery":1,"../../bower_components/underscore/underscore.js":4,"../../lib/modernizr.touch.js":5,"../../lib/rdio-utils/rdio-utils.js":6,"./Classes/Api.js":7,"./Classes/Location.js":9,"./Views/GigFmView.js":11,"./Views/MoreGigsView.js":12,"./Views/PlayerView.js":13,"./Views/VenueView.js":14}],11:[function(require,module,exports){
+},{"../../bower_components/jquery/dist/jquery":1,"../../bower_components/underscore/underscore.js":4,"../../lib/rdio-utils/rdio-utils.js":5,"./Classes/Api.js":6,"./Classes/Location.js":8,"./Views/GigFmView.js":10,"./Views/MoreGigsView.js":11,"./Views/PlayerView.js":12,"./Views/VenueView.js":13}],10:[function(require,module,exports){
 /* global R */
 require('../../../bower_components/rdio-api/index.js');
 
@@ -4889,7 +4783,7 @@ GigFmView.prototype = {
 
 module.exports = GigFmView;
 
-},{"../../../bower_components/jquery/dist/jquery":1,"../../../bower_components/rdio-api/index.js":3}],12:[function(require,module,exports){
+},{"../../../bower_components/jquery/dist/jquery":1,"../../../bower_components/rdio-api/index.js":3}],11:[function(require,module,exports){
 var $ = require('../../../bower_components/jquery/dist/jquery');
 var _ = require('../../../bower_components/underscore/underscore.js');
 var Events = require('../Classes/Events.js');
@@ -4982,7 +4876,7 @@ MoreGigsView.prototype = {
 
 module.exports = MoreGigsView;
 
-},{"../../../bower_components/jquery/dist/jquery":1,"../../../bower_components/mustache.js/mustache.js":2,"../../../bower_components/underscore/underscore.js":4,"../Classes/Events.js":8}],13:[function(require,module,exports){
+},{"../../../bower_components/jquery/dist/jquery":1,"../../../bower_components/mustache.js/mustache.js":2,"../../../bower_components/underscore/underscore.js":4,"../Classes/Events.js":7}],12:[function(require,module,exports){
 /* global R */
 require('../../../bower_components/rdio-api/index.js');
 
@@ -5038,7 +4932,13 @@ PlayerView.prototype = {
 
     onPrevButtonClick: function (event) {
         event.preventDefault();
-        this.playPrevious();
+
+        var self = this;
+        R.ready(function () {
+            if (!self.playAgain()) {
+                self.playPrevious();
+            }
+        });
     },
 
     onNextButtonClick: function (event) {
@@ -5084,7 +4984,8 @@ PlayerView.prototype = {
 
     toMinutes: function (seconds) {
         var minutes = Math.floor(seconds / 60);
-        return minutes + ':' + (seconds - minutes * 60);
+        var secs = '0' + (seconds - minutes * 60);
+        return minutes + ':' + secs.substring(secs.length - 2);
     },
 
     renderState: function (state) {
@@ -5122,6 +5023,16 @@ PlayerView.prototype = {
         return this.play();
     },
 
+    playAgain: function () {
+        var position = R.player.position();
+        if (position <= 1) {
+            return false;
+        }
+
+        this.play();
+        return true;
+    },
+
     playPrevious: function () {
         this._currentGig--;
         if (this._currentGig < 0) {
@@ -5139,7 +5050,7 @@ PlayerView.prototype = {
 
 module.exports = PlayerView;
 
-},{"../../../bower_components/jquery/dist/jquery":1,"../../../bower_components/rdio-api/index.js":3,"../../../bower_components/underscore/underscore.js":4,"../Classes/Events.js":8}],14:[function(require,module,exports){
+},{"../../../bower_components/jquery/dist/jquery":1,"../../../bower_components/rdio-api/index.js":3,"../../../bower_components/underscore/underscore.js":4,"../Classes/Events.js":7}],13:[function(require,module,exports){
 var $ = require('../../../bower_components/jquery/dist/jquery');
 var _ = require('../../../bower_components/underscore/underscore.js');
 
@@ -5165,4 +5076,8 @@ VenueView.prototype = {
 
 module.exports = VenueView;
 
-},{"../../../bower_components/jquery/dist/jquery":1,"../../../bower_components/underscore/underscore.js":4}]},{},[10]);
+},{"../../../bower_components/jquery/dist/jquery":1,"../../../bower_components/underscore/underscore.js":4}],14:[function(require,module,exports){
+var GigFm = require('./GigFm.js');
+window.gigFm = new GigFm();
+
+},{"./GigFm.js":9}]},{},[14]);

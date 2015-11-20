@@ -1,22 +1,25 @@
+'use strict';
+
+
 var $ = require('../../../bower_components/jquery/dist/jquery');
 
 
-function Events () {
+function Events() {
     this._events = {};
 }
 
 
 Events.prototype = {
-    on: function(eventName, callback) {
+    on: function (eventName, callback) {
         if (!this._events[eventName]) {
-            this._events[eventName] = $.Callbacks();
+            this._events[eventName] = new $.Callbacks();
         }
 
         this._events[eventName].add(callback);
     },
 
 
-    removeEvent: function(eventName) {
+    removeEvent: function (eventName) {
         if (!this._events[eventName]) {
             return;
         }
@@ -25,9 +28,9 @@ Events.prototype = {
     },
 
 
-    trigger: function(eventName) {
+    trigger: function (eventName, arg) {
         if (this._events[eventName]) {
-            this._events[eventName].fire();
+            this._events[eventName].fire(arg);
         }
     }
 };

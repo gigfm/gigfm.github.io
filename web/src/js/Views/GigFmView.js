@@ -1,13 +1,36 @@
+'use strict';
+
+
 /* global R */
 require('../../../bower_components/rdio-api/index.js');
 
 var $ = require('../../../bower_components/jquery/dist/jquery');
 
 function GigFmView() {
-    R.ready(function () {
-        $('.username').text(R.currentUser.get('firstName'));
-    });
 }
+
+
+GigFmView.prototype = {
+    render: function () {
+        R.ready(function () {
+            var firstname;
+            var playingTrack = R.player.playingTrack();
+            var currentUser = R.currentUser;
+
+            if (! (playingTrack || currentUser)) {
+                return;
+            }
+
+            firstname = currentUser.get('firstName');
+            if (!firstname) {
+                firstname = 'there fancy pants';
+            }
+
+            $('.personal-message-listener').text(firstname);
+            $('.personal-message-artist').text(playingTrack.get('artist'));
+        });
+    }
+};
 
 
 module.exports = GigFmView;

@@ -2,13 +2,15 @@
 require('../../../bower_components/rdio-api/index.js');
 
 var $ = require('../../../bower_components/jquery/dist/jquery');
+var _ = require('../../../bower_components/underscore/underscore.js');
 var Events = require('../Classes/Events.js');
 
 
-function PlayerView() {
+function PlayerView(gigs) {
     var self = this;
 
-    this._gigs = [];
+    this._currentGig = 0;
+    this._gigs = gigs;
 
     this.$playButton = $('.player-play-button');
     this.$prevButton = $('.player-prev-button');
@@ -30,14 +32,24 @@ function PlayerView() {
 PlayerView.prototype = {
 
     onPlayingTrackChange: function (track) {
-        this.renderTrackInfo(track);
+        // track === null when a song ends
+        if (track) {
+            this.trigger('change:playing-track', track);
+            this.renderTrackInfo(track);
+        } else {
+            this.playNext();
+        }
     },
 
 
-    onPlayStateChange: function(state) {
+    onPlayStateChange: function (state) {
         if (state === R.player.PLAYSTATE_PLAYING || state === R.player.PLAYSTATE_BUFFERING) {
+            this.setTrackPosition();
             this.renderState('pause');
         } else {
+            if (this._interval) {
+                clearInterval(this._interval);
+            }
             this.renderState('play');
         }
     },
@@ -45,7 +57,14 @@ PlayerView.prototype = {
 
     onPrevButtonClick: function (event) {
         event.preventDefault();
-        this.playPrevious();
+
+        var self = this;
+        R.ready(function () {
+            if (! self.playAgain()) {
+                self.playPrevious();
+            }
+        })
+
     },
 
 
@@ -61,40 +80,48 @@ PlayerView.prototype = {
     },
 
 
+    setTrackPosition: function () {
+        var duration;
+        var position;
+        var self = this;
+        var track = R.player.playingTrack();
+        if (! track) {
+            return
+        }
+
+        duration = track.get('duration');
+        position = R.player.position();
+        $('.player-current').text(this.toMinutes(position));
+        $('.player-progress-current').width((position / duration) + '%');
+
+        this._interval = setInterval(function () {
+            var position = R.player.position();
+            $('.player-current').text(self.toMinutes(position));
+            $('.player-progress-current').width((position / duration) + '%');
+        }, 1000);
+    },
+
+
     renderTrackInfo: function (track) {
         $('.player-track-image').attr('src', track.get('icon'));
         $('.player-track-name').text(track.get('name'));
         $('.player-track-artist').text(track.get('artist'));
         $('.player-track-album').text(track.get('album'));
+
+        var duration = track.get('duration');
+        $('.player-end').text(this.toMinutes(duration));
+    },
+
+
+    toMinutes: function (seconds) {
+        var minutes = Math.floor(seconds / 60);
+        var secs = '0' + (seconds - (minutes * 60));
+        return minutes + ':' + secs.substring(secs.length - 2);
     },
 
 
     renderState: function (state) {
-        $('.play-button').text(state);
-    },
-
-
-    setGigs: function (gigs) {
-        var self = this;
-        var deferred = $.Deferred();
-
-        $.each(gigs, function (index, gig) {
-            self._gigs[gig.trackKey] = gig;
-        });
-
-        R.ready(function () {
-            $.each(gigs, function (index, gig) {
-                R.player.queue.add(gig.trackKey);
-            });
-
-            R.player.queue.on('add', function(model, collection, info) {
-                if (gigs.length > 5 || gigs.length == collection.length && deferred.state() != 'resolved') {
-                    deferred.resolve(collection);
-                }
-            });
-        });
-
-        return deferred.promise();
+        $('.player-play-button').text(state);
     },
 
 
@@ -105,29 +132,58 @@ PlayerView.prototype = {
     },
 
 
-    playNext: function () {
+    playGig: function (gig) {
         R.ready(function () {
-            R.player.next();
+            R.player.play({source: gig.trackKey});
         });
+
+        return gig;
+    },
+
+
+    playTrack: function (trackKey) {
+        this._currentGig = _.findIndex(this._gigs, function (gig) {
+            return gig.trackKey == trackKey;
+        });
+
+        this.play();
+    },
+
+
+    playNext: function () {
+        this._currentGig++;
+        if (this._currentGig >= this._gigs.length) {
+            this._currentGig = 0;
+        }
+
+        return this.play();
+    },
+
+
+    playAgain: function () {
+        var position = R.player.position();
+        if (position <= 1) {
+            return false;
+        }
+
+        this.play();
+        return true;
     },
 
 
     playPrevious: function () {
-        R.ready(function () {
-            R.player.previous();
-        });
+        this._currentGig--;
+        if (this._currentGig < 0) {
+            this._currentGig = this._gigs.length - 1;
+        }
+
+        return this.play();
     },
 
 
     play: function () {
-        var source;
-
-        R.ready(function () {
-            R.player.play();
-            source = R.player.playingSource();
-        });
-
-        return this._gigs[source];
+        var gig = this._gigs[this._currentGig];
+        return this.playGig(gig);
     }
 };
 

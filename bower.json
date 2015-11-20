@@ -1,13 +1,12 @@
 {
   "name": "gigfm",
-  "description": "",
-  "main": "index.js",
+  "description": "A hackathon project: Play music for artists peforming locally",
+  "repository": "https://github.com/gigfm/gigfm.github.io",
   "authors": [
     "Gabriel Castillo <gcastillo@pandora.com>"
   ],
-  "license": "ISC",
-  "moduleType": [],
-  "homepage": "",
+  "license": "MIT",
+  "homepage": "gigfm.github.com",
   "ignore": [
     "**/.*",
     "node_modules",
@@ -15,10 +14,10 @@
     "test"
   ],
   "dependencies": {
-    "jquery.rdio": "~0.1.1",
     "jquery": "~2.1.4",
     "rdio-api": "https://www.rdio.com/api/api.js?client_id=c5zugitjrfft7f3mvzbjzajaaa",
     "underscore": "~1.8.3",
-    "bootstrap": "~3.3.5"
+    "bootstrap": "~3.3.5",
+    "mustache.js": "~2.2.0"
   }
 }

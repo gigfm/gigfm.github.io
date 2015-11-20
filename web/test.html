@@ -1,49 +1,67 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Simple Player</title>
+    <title>GigFm</title>
     <meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <link rel="stylesheet" type="text/css" href="lib/normalize.css">
     <link rel="stylesheet" type="text/css" href="lib/rdio-utils/rdio-utils.css">
     <link rel="stylesheet" type="text/css" href="style/main.css">
 
-    <script id="album-template" type="text/template">
-        <span class="album">
-        <div class="icon" style="background-image: url(<%= icon %>)">
-            <div class="buttons">
-                <span class="play btn">Play Album</span>
-                <a href="http://www.rdio.com<%= url %>" target="_blank" class="site btn">View on Rdio.com</a>
-                <a href="<%= appUrl %>" target="_blank" class="app btn">View in Rdio app</a>
+
+    <script id="gig-template" type="x-tmpl-mustache">
+        <li class="gig" style="background: url({{image_url}}) no-repeat center center; width: 200px; height: 200px;">
+            <div class="gig-artist-image">
+                <a href="{{ticket_url}}" class="gig-get-tickets-link" target="_blank">Get tickets</a>
+                <a href="#" class="gig-play-artist-link" data-track-key="{{track_key}}">Play artist</a>
             </div>
-        </div>
-        <div class="title label">title: <%= name %></div>
-        <div class="artist label">artist: <%= artist %></div>
-      </span>
+
+            <div class="artist label">{{artist}}</div>
+        </li>
     </script>
 </head>
 <body>
 
 <div class="header">
+    <h1>Hey <span class="personal-message-listener"></span>, don't miss out on seeing <span class="personal-message-artist"></span> live!</h1>
+
     <div class="section">
+        <div class="player-progress">
+            <div class="player-current"></div>
+            <div class="player-progress-meter">
+                <div class="player-progress-current"></div>
+            </div>
+            <div class="player-end"></div>
+        </div>
         <img class="icon player-track-image">
     </div>
+
     <div class="section player">
         <button class="play player-play-button">play</button>
         <button class="next player-next-button">next</button>
         <button class="prev player-prev-button">previous</button>
     </div>
-    <div class="section">
+
+    <div class="section track-info">
         <div class="track player-track-name label">Not Playing</div>
         <div class="album-title player-track-album label"></div>
         <div class="artist player-track-artist label"></div>
     </div>
+
+    <div class="section venue">
+        <div class="venue-artist-name"></div>
+        <div class="venue-show-date"></div>
+        <div class="venue-show-time"></div>
+        <div class="venue-name"></div>
+        <div class="venue-show-location"></div>
+
+        <a href="#" class="venue-buy-tickets-link">Get Tickets</a>
+    </div>
 </div>
 
-<script src="dist/js/GigFm.js"></script>
-<script>
-    var gigfm = new GigFm();
-</script>
+<div class="related-gigs"></div>
+
+<script src="dist/js/app.js"></script>
 
 </body>
 </html>
