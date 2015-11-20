@@ -6,11 +6,16 @@ var _ = require('../../../bower_components/underscore/underscore.js');
 
 
 function VenueView(gigs) {
-    this._gigs = gigs;
+    this.init(gigs);
 }
 
 
 VenueView.prototype = {
+    init: function (gigs) {
+        this._gigs = gigs;
+    },
+
+
     render: function (track) {
         var trackKey = track.get('key');
         var gig = _.find(this._gigs, function (_gig) {

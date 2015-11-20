@@ -7,13 +7,13 @@ require('../../../bower_components/rdio-api/index.js');
 var $ = require('../../../bower_components/jquery/dist/jquery');
 
 function GigFmView() {
-    $('.showArtistinfo').click(function(){
+    $('.showArtistinfo').off('click').click(function(){
         $('.albumArt').toggleClass('close');
         $('.showArtistinfo').toggleClass('collapseDown');
         $('#artistBio').toggleClass('open');
     });
 
-    $('.viewMoregigs').click(function(){
+    $('.viewMoregigs').off('click').click(function(){
         $('#contentWrapper').toggleClass('close');
         $('.viewMoregigs').toggleClass('collapseDown');
         $('#relatedGigs').toggleClass('open');

@@ -16,15 +16,17 @@ Events.prototype = {
         }
 
         this._events[eventName].add(callback);
+        return this;
     },
 
 
-    removeEvent: function (eventName) {
+    off: function (eventName) {
         if (!this._events[eventName]) {
-            return;
+            return this;
         }
 
         this._events[eventName] = null;
+        return this;
     },
 
 
@@ -32,6 +34,8 @@ Events.prototype = {
         if (this._events[eventName]) {
             this._events[eventName].fire(arg1, arg2);
         }
+
+        return this;
     }
 };
 

@@ -6806,20 +6806,24 @@ Events.prototype = {
         }
 
         this._events[eventName].add(callback);
+        return this;
     },
 
-    removeEvent: function (eventName) {
+    off: function (eventName) {
         if (!this._events[eventName]) {
-            return;
+            return this;
         }
 
         this._events[eventName] = null;
+        return this;
     },
 
     trigger: function (eventName, arg1, arg2) {
         if (this._events[eventName]) {
             this._events[eventName].fire(arg1, arg2);
         }
+
+        return this;
     }
 };
 
@@ -6885,7 +6889,7 @@ var PlayerView = require('./Views/PlayerView.js');
 
 function GigFm() {
     if ('geolocation' in navigator) {
-        var location = new Location();
+        var location = this.location = new Location();
 
         location.getLocation().done(this.onGetLocation.bind(this));
     } else {
@@ -6915,28 +6919,35 @@ GigFm.prototype = {
     },
 
     onApiSuccess: function (response) {
-        var playerView;
-        var moreGigsView;
-
         this.view = new GigFmView();
 
         if (response && $.isArray(response)) {
-            playerView = this.playerView = new PlayerView(response);
-            moreGigsView = this.moreGigsView = new MoreGigsView(response);
-            this.venueView = new VenueView(response);
+            this.playerView = new PlayerView(response);
+            this.moreGigsView = new MoreGigsView(response);
+            this.moreGigsView.init(response);
 
-            playerView.on('change:playing-track', this.onPlayingTrackChange.bind(this));
-            moreGigsView.on('change:location', this.onLocationChange.bind(this));
-            moreGigsView.on('request:play-track', this.onPlayTrackRequest.bind(this));
+            if (!this.venueView) {
+                this.venueView = new VenueView(response);
+            } else {
+                this.venueView.init(response);
+            }
 
-            playerView.play();
+            this.playerView.off('change:playing-track').on('change:playing-track', this.onPlayingTrackChange.bind(this));
+            this.moreGigsView.off('change:location').on('change:location', this.onLocationChange.bind(this));
+            this.moreGigsView.off('request:play-track').on('request:play-track', this.onPlayTrackRequest.bind(this));
+
+            this.playerView.play();
         } else {
             alert('Invalid data from gigFm.');
         }
     },
 
     onLocationChange: function (lat, long) {
-        this.setLocation(lat, long);
+        if (!lat || !long) {
+            this.location.getLocation().done(this.onGetLocation.bind(this));
+        } else {
+            this.setLocation(lat, long);
+        }
     },
 
     onPlayingTrackChange: function (track) {
@@ -6965,13 +6976,13 @@ require('../../../bower_components/rdio-api/index.js');
 var $ = require('../../../bower_components/jquery/dist/jquery');
 
 function GigFmView() {
-    $('.showArtistinfo').click(function () {
+    $('.showArtistinfo').off('click').click(function () {
         $('.albumArt').toggleClass('close');
         $('.showArtistinfo').toggleClass('collapseDown');
         $('#artistBio').toggleClass('open');
     });
 
-    $('.viewMoregigs').click(function () {
+    $('.viewMoregigs').off('click').click(function () {
         $('#contentWrapper').toggleClass('close');
         $('.viewMoregigs').toggleClass('collapseDown');
         $('#relatedGigs').toggleClass('open');
@@ -7009,32 +7020,43 @@ var Events = require('../Classes/Events.js');
 var Mustache = require('../../../bower_components/mustache.js/mustache.js');
 
 function MoreGigsView(gigs) {
-    var tracks = {};
     var self = this;
 
-    this.template = $('#gig-template').html();
-    Mustache.parse(this.template);
-
-    _.each(gigs, function (gig) {
-        tracks[gig.trackKey] = {
-            gig: gig
-        };
-    });
-    this._tracks = tracks;
+    this.init(gigs);
 
     R.ready(this.onReady.bind(this));
     $.extend(this, new Events());
 
-    $('.change-location').click(function (event) {
+    $('.change-location').off('click').click(function (event) {
         event.preventDefault();
-        var latlong = $(event.target).data('latlong').split(',');
+        var latlong = $(event.target).data('latlong');
 
-        self.trigger('change:location', latlong[0], latlong[1]);
+        if (typeof latlong == 'string') {
+            latlong = latlong.split(',');
+            self.trigger('change:location', latlong[0], latlong[1]);
+        } else {
+            self.trigger('change:location');
+        }
+
         $('#changeLocationModal').modal('hide');
     });
 }
 
 MoreGigsView.prototype = {
+
+    init: function (gigs) {
+        var tracks = {};
+        this.template = $('#gig-template').html();
+        Mustache.parse(this.template);
+
+        _.each(gigs, function (gig) {
+            tracks[gig.trackKey] = {
+                gig: gig
+            };
+        });
+        this._tracks = tracks;
+    },
+
     render: function (num) {
         var self = this;
         var divArray = [];
@@ -7118,9 +7140,7 @@ var Events = require('../Classes/Events.js');
 
 function PlayerView(gigs) {
     var self = this;
-
-    this._currentGig = 0;
-    this._gigs = gigs;
+    this.init(gigs);
 
     this.$playButton = $('.player-play-button');
     this.$prevButton = $('.player-prev-button');
@@ -7128,11 +7148,11 @@ function PlayerView(gigs) {
     this.$thumbDownButton = $('.thumbDownButton');
     this.$thumbUpButton = $('.thumbUpButton');
 
-    this.$playButton.click(this.onPlayButtonClick.bind(this));
-    this.$prevButton.click(this.onPrevButtonClick.bind(this));
-    this.$nextButton.click(this.onNextButtonClick.bind(this));
-    this.$thumbUpButton.click(this.onThumbUpClick.bind(this));
-    this.$thumbDownButton.click(this.onThumbDownClick.bind(this));
+    this.$playButton.off('click').click(this.onPlayButtonClick.bind(this));
+    this.$prevButton.off('click').click(this.onPrevButtonClick.bind(this));
+    this.$nextButton.off('click').click(this.onNextButtonClick.bind(this));
+    this.$thumbUpButton.off('click').click(this.onThumbUpClick.bind(this));
+    this.$thumbDownButton.off('click').click(this.onThumbDownClick.bind(this));
 
     R.ready(function () {
         R.player.on('change:playingTrack', self.onPlayingTrackChange.bind(self));
@@ -7143,6 +7163,11 @@ function PlayerView(gigs) {
 }
 
 PlayerView.prototype = {
+
+    init: function (gigs) {
+        this._currentGig = 0;
+        this._gigs = gigs;
+    },
 
     onPlayingTrackChange: function (track) {
         // track === null when a song ends
@@ -7319,10 +7344,14 @@ var $ = require('../../../bower_components/jquery/dist/jquery');
 var _ = require('../../../bower_components/underscore/underscore.js');
 
 function VenueView(gigs) {
-    this._gigs = gigs;
+    this.init(gigs);
 }
 
 VenueView.prototype = {
+    init: function (gigs) {
+        this._gigs = gigs;
+    },
+
     render: function (track) {
         var trackKey = track.get('key');
         var gig = _.find(this._gigs, function (_gig) {

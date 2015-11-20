@@ -20,7 +20,7 @@ var PlayerView = require('./Views/PlayerView.js');
 
 function GigFm() {
     if ('geolocation' in navigator) {
-        var location = new Location();
+        var location = this.location = new Location();
 
         location.getLocation().done(this.onGetLocation.bind(this));
     } else {
@@ -55,21 +55,24 @@ GigFm.prototype = {
 
 
     onApiSuccess: function (response) {
-        var playerView;
-        var moreGigsView;
-
         this.view = new GigFmView();
 
         if (response && $.isArray(response)) {
-            playerView = this.playerView = new PlayerView(response);
-            moreGigsView = this.moreGigsView = new MoreGigsView(response);
-            this.venueView = new VenueView(response);
+            this.playerView = new PlayerView(response);
+            this.moreGigsView = new MoreGigsView(response);
+            this.moreGigsView.init(response);
 
-            playerView.on('change:playing-track', this.onPlayingTrackChange.bind(this));
-            moreGigsView.on('change:location', this.onLocationChange.bind(this));
-            moreGigsView.on('request:play-track', this.onPlayTrackRequest.bind(this));
+            if (! this.venueView) {
+                this.venueView = new VenueView(response);
+            } else {
+                this.venueView.init(response);
+            }
 
-            playerView.play();
+            this.playerView.off('change:playing-track').on('change:playing-track', this.onPlayingTrackChange.bind(this));
+            this.moreGigsView.off('change:location').on('change:location', this.onLocationChange.bind(this));
+            this.moreGigsView.off('request:play-track').on('request:play-track', this.onPlayTrackRequest.bind(this));
+
+            this.playerView.play();
         } else {
             alert('Invalid data from gigFm.');
         }
@@ -77,7 +80,11 @@ GigFm.prototype = {
 
 
     onLocationChange: function (lat, long) {
-        this.setLocation(lat, long);
+        if (!lat || !long) {
+            this.location.getLocation().done(this.onGetLocation.bind(this));
+        } else {
+            this.setLocation(lat, long);
+        }
     },
 
 

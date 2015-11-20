@@ -5,33 +5,45 @@ var Mustache = require('../../../bower_components/mustache.js/mustache.js');
 
 
 function MoreGigsView(gigs) {
-    var tracks  = {};
     var self = this;
 
-    this.template = $('#gig-template').html();
-    Mustache.parse(this.template);
-
-    _.each(gigs, function (gig) {
-        tracks[gig.trackKey] = {
-            gig: gig
-        };
-    });
-    this._tracks = tracks;
+    this.init(gigs);
 
     R.ready(this.onReady.bind(this));
     $.extend(this, new Events());
 
-    $('.change-location').click(function (event) {
+    $('.change-location').off('click').click(function (event) {
         event.preventDefault();
-        var latlong = $(event.target).data('latlong').split(',');
+        var latlong = $(event.target).data('latlong');
 
-        self.trigger('change:location', latlong[0], latlong[1]);
+        if (typeof latlong == 'string') {
+            latlong = latlong.split(',');
+            self.trigger('change:location', latlong[0], latlong[1]);
+        } else {
+            self.trigger('change:location');
+        }
+
         $('#changeLocationModal').modal('hide');
     });
 }
 
 
 MoreGigsView.prototype = {
+
+    init: function (gigs) {
+        var tracks  = {};
+        this.template = $('#gig-template').html();
+        Mustache.parse(this.template);
+
+        _.each(gigs, function (gig) {
+            tracks[gig.trackKey] = {
+                gig: gig
+            };
+        });
+        this._tracks = tracks;
+    },
+
+
     render: function (num) {
         var self = this;
         var divArray = [];

@@ -8,9 +8,7 @@ var Events = require('../Classes/Events.js');
 
 function PlayerView(gigs) {
     var self = this;
-
-    this._currentGig = 0;
-    this._gigs = gigs;
+    this.init(gigs);
 
     this.$playButton = $('.player-play-button');
     this.$prevButton = $('.player-prev-button');
@@ -18,11 +16,11 @@ function PlayerView(gigs) {
     this.$thumbDownButton = $('.thumbDownButton');
     this.$thumbUpButton = $('.thumbUpButton');
 
-    this.$playButton.click(this.onPlayButtonClick.bind(this));
-    this.$prevButton.click(this.onPrevButtonClick.bind(this));
-    this.$nextButton.click(this.onNextButtonClick.bind(this));
-    this.$thumbUpButton.click(this.onThumbUpClick.bind(this));
-    this.$thumbDownButton.click(this.onThumbDownClick.bind(this));
+    this.$playButton.off('click').click(this.onPlayButtonClick.bind(this));
+    this.$prevButton.off('click').click(this.onPrevButtonClick.bind(this));
+    this.$nextButton.off('click').click(this.onNextButtonClick.bind(this));
+    this.$thumbUpButton.off('click').click(this.onThumbUpClick.bind(this));
+    this.$thumbDownButton.off('click').click(this.onThumbDownClick.bind(this));
 
     R.ready(function () {
         R.player.on('change:playingTrack', self.onPlayingTrackChange.bind(self));
@@ -34,6 +32,13 @@ function PlayerView(gigs) {
 
 
 PlayerView.prototype = {
+
+
+    init: function (gigs) {
+        this._currentGig = 0;
+        this._gigs = gigs;
+    },
+
 
     onPlayingTrackChange: function (track) {
         // track === null when a song ends
