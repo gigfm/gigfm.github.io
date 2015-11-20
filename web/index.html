@@ -41,13 +41,20 @@
 		 height: 100vh;
 	}
 	
-	#playerWrapper, #contentWrapper {
+	#playerWrapper {
     	margin: auto;
-    	padding: 10% 0;
+    	padding: 10% 0 10%;
     	width: 450px;
 	}
 	
 	#contentWrapper {
+    	margin: auto;
+    	padding: 5% 0 10%;
+    	width: 450px;
+	}
+	
+	#content {
+		padding-bottom: 5%;	
 	}
 	
 	
@@ -289,6 +296,16 @@
 	
 }
 
+#gigFM {
+    margin: auto;
+    width: 65%;
+}
+
+#gigFM img {
+    height: auto;
+    width: 100%;
+}
+
 
 /*hide show*/
 
@@ -410,6 +427,9 @@
             <div class="col-md-6" id="content">
             	
                 <div id="contentWrapper">
+                	<div id="gigFM">
+                		<img src="img/gigfm.png" />
+                	</div>
             
                     <div id="blurb">
                         Hey <span class="personal-message-listener"></span>, don’t miss out on seeing <span class="personal-message-artist"></span> live.  Check out this upcoming gig near you:
