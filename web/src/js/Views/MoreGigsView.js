@@ -79,7 +79,7 @@ MoreGigsView.prototype = {
 
     , onPlayArtistClick: function (event) {
         event.preventDefault();
-        
+
         var trackKey = $(event.target).data('trackKey');
         if (! trackKey) {
             trackKey = $(event.currentTarget).data('trackKey');
