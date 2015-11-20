@@ -149,6 +149,10 @@
     width: 375px;
 }
 
+.progressMiddle {
+    margin-top: -13px;
+}
+
 .albumArt {
     height: 450px;
 	transition: height .5s ease;
@@ -323,6 +327,13 @@
 	transition: background-image 0.2s ease;
 }
 
+.changeLocation {
+    border-bottom: 1px solid rgba(214, 222, 234, 0.3);
+    color: #d6deea;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+}
+
 @media only screen and (max-width : 990px) {
 	
 	#playerOverlay {
@@ -366,7 +377,7 @@
                     <div class="progress">
                         <div class="remainingTime player-remaining"></div>
                         <div class="elapsedTime player-current"></div>
-                        <div class="progressBar"><img width="197" height="4" data-no-retina="" src="img/status.png" class="progressMiddle"></div>
+                        <div class="progressBar"><img width="0" height="4" data-no-retina="" src="img/status.png" class="progressMiddle"></div>
                     </div>
                     
                     <div class="albumArt">
@@ -412,7 +423,7 @@
             	</div>
                 
                 <div id="relatedGigs">
-                        <div class="relatedHeader"> Related gigs near you</div>
+                        <div class="relatedHeader"> Related gigs near you (location) <span class="changeLocation">Ghange Location</span></div>
                         <!--<div class="moreGigs">View more gigs <div class="viewMoregigs"></div></div>-->
                         <div class="gigsWrapper"></div>
                 </div>
