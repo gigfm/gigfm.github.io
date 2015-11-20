@@ -1,0 +1,12 @@
+{
+  "name": "api",
+  "_cacheHeaders": {
+    "Content-Language": "en",
+    "Content-Length": "2135",
+    "Content-Type": "text/javascript"
+  },
+  "main": "index.js",
+  "_source": "https://www.rdio.com/api/api.js?client_id=c5zugitjrfft7f3mvzbjzajaaa",
+  "_target": "*",
+  "_originalSource": "https://www.rdio.com/api/api.js?client_id=c5zugitjrfft7f3mvzbjzajaaa"
+}
