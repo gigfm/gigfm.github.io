@@ -1,0 +1,411 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Untitled Document</title>
+<link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap-theme.css" />
+<link rel="stylesheet" type="text/css"href="bower_components/bootstrap/dist/css/bootstrap.css" />
+<link rel="stylesheet" type="text/css"href="css/fonts.css" />
+<script type="text/javascript" href="bower_components/bootstrap/dist/js/bootstrap.js" ></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+<script>
+</script>
+
+<style>
+	html, body {
+	border: 0 none;
+    font-size: 10px;
+    margin: 0;
+    padding: 0;
+    vertical-align: baseline;
+	width:100%;
+	height: 100%;
+	}
+	
+	body {
+		background-image: url(img/bkg.jpg);
+		background-size:cover;
+		background-position:center center;
+		color:#fff;
+		font-family:"Avenir-Book","Helvetica Neue",Helvetica,Arial,sans-serif;
+		
+	}
+	#player {
+    	background: rgba(0, 0, 0, 0.3);
+		 height: 100vh;
+	}
+	
+	#playerWrapper, #contentWrapper {
+    	margin: auto;
+    	padding: 10% 0;
+    	width: 450px;
+	}
+	
+	
+	.buttons {
+    margin: 10px auto;
+    width: 293px;
+}
+	
+	.thumbDownButton, .thumbUpButton, .playButton, .pauseButton, .skipButton, .volumePosition {
+    background-color: transparent;
+    	display: inline-block;
+   		height: 55px;
+   		margin: 0;
+    	width: 55px;
+		 background-repeat: no-repeat;
+    background-size: 75% auto;
+	}
+	
+	.thumbDownButton {
+    background-image: url("img/thumbdown.png");
+   
+}
+
+
+.thumbUpButton {
+    background-image: url("img/thubmup.png");
+   
+}
+
+.playButton {
+    background-image: url("img/play.png");
+   
+}
+.pauseButton {
+    background-image: url("img/pause.png");
+   
+}
+.skipButton {
+    background-image: url("img/skip.png");
+   
+}
+.volumePosition {
+    background-image: url("img/volume.png");
+   
+}
+	
+	.pauseButton {
+		display:none;
+	}
+	.progress {
+    background-color: transparent;
+    background-image: none;
+    border-radius: 0;
+    box-shadow: none;
+    height: auto;
+    margin-bottom: 30px;
+    overflow: visible;
+}
+	
+	.progress .elapsedTime {
+    color: #d1dbea;
+    float: left;
+    font-size: 12px;
+    margin-top: -6px;
+    padding-right: 6px;
+    position: relative;
+    text-align: right;
+    vertical-align: top;
+    width: 34px;
+}
+
+.progress .remainingTime {
+    color: #d1dbea;
+    float: right;
+    font-size: 12px;
+    margin-top: -6px;
+    padding-left: 3px;
+    position: relative;
+    text-align: left;
+    vertical-align: top;
+    width: 35px;
+}
+
+.progress .progressBar {
+    background-color: #0f304f;
+    border-radius: 2px;
+    height: 4px;
+    overflow: hidden;
+    text-align: left;
+    vertical-align: middle;
+    width: 375px;
+}
+
+#playerBar .progressBar img {
+    vertical-align: top;
+}
+
+.albumArt img {
+    height: auto;
+    width: 100%;
+}
+
+.trackInfo {
+    color: #d6deea;
+    display: inline-block;
+    font-size: 14px;
+    margin-top: 24px;
+    position: relative;
+    width: 407px;
+}
+
+.songName {
+	color:#fff;
+}
+
+.showArtistinfo {
+   background-image: url("img/collapse_up.png");
+    background-size: 100% auto;
+    display: inline-block;
+    height: 40px;
+    margin-top: 24px;
+    vertical-align: top;
+    width: 40px;
+	cursor:pointer;
+}
+
+#blurb {
+    font-size: 20px;
+    text-align: center;
+}
+
+#showInfo {
+    font-size: 24px;
+    margin: 12% 0;
+    text-align: center;
+}
+
+.showTickets .btn {
+    border: 1px solid #fff;
+    color: #fff;
+    font-size: 30px;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    line-height: 1.5em;
+    padding: 10px 50px;
+    text-transform: uppercase;
+}
+
+.showTickets {
+    padding-top: 6%;
+}
+
+#relatedGigs {
+    margin: auto;
+    position: relative;
+    width: 90%;
+	height: 25vh;
+}
+
+.relatedHeader {
+    display: inline-block;
+    font-size: 18px;
+    margin-bottom: 2.3%;
+}
+
+.relatedGig {
+    display: inline-block;
+    margin-right: 4.5%;
+    width: 21%;
+}
+
+.relatedGig img {
+    width: 100%;
+}
+
+.relatedGig:nth-child(4) {
+    margin-right: 0;
+}
+
+.moreGigs {
+    display: inline-block;
+    font-size: 12px;
+    position: absolute;
+    right: 0;
+    width: 23%;
+	
+}
+
+.viewMoregigs {
+    background-image: url("img/collapse_up.png");
+    background-size: 100% auto;
+    height: 30px;
+    position: absolute;
+    right: 6px;
+    top: -7px;
+    width: 30px;
+}
+
+
+#artistBio {
+    height:0px;
+	overflow:hidden;
+    font-size: 14px;
+}
+
+#wrapper {
+	overflow:hidden;
+}
+
+
+/*hide show*/
+
+.close {
+    height: 0;
+    margin: 0 !importatn;
+    overflow: hidden;
+    padding: 0!important;
+	transition: height .5s ease-out;
+}
+
+.open {
+	height: auto;
+	transition: height .5s ease-out;
+}
+
+#artistBio.open {
+    height: 35vh;
+    margin-top: 30px;
+    overflow: scroll;
+	transition: height .5s ease-out;
+}
+
+#relatedGigs.open {
+    height: 80vh;
+    margin-top: 10%;
+    overflow: scroll;
+    padding: 15px 0 0;
+	transition: height .5s ease-out;
+}
+
+
+.collapseDown {
+    background-image: url("img/collapse_down.png");
+	transition: background-image 0.2s ease;
+}
+	
+</style>
+</head>
+
+<body>
+	<div id="wrapper">
+    	<div class="row">
+        	<div class="col-md-6" id="player">
+            
+            	<div id="playerWrapper">
+            
+                    <div class="buttons">
+                        <div class="thumbDownButton"><a href="#"></a></div>
+                        <div class="thumbUpButton"><a href="#"></a></div>
+                        <div class="playButton"><a href="#"></a></div>
+                        <div class="pauseButton"><a href="#"></a></div>
+                        <div class="skipButton"><a href="#"></a></div>
+                        <div class="volumePosition">
+                            <div class="volumeControl">
+                                <div class="volumeBackground" style="display: none;">
+                                    <div class="volumeBar"></div>
+                                    <div class="volumeKnob ui-draggable ui-draggable-handle" style="left: 102px;"></div>
+                                </div>
+                                <div class="volumeButton"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress">
+                        <div class="remainingTime">-1:33</div>
+                        <div class="elapsedTime">2:05</div>
+                        <div class="progressBar"><img width="197" height="4" data-no-retina="" src="img/status.png" class="progressMiddle"></div>
+                    </div>
+                    
+                    <div class="albumArt">
+                        <img src="img/artangels.jpg" />
+                    </div>
+                    
+                    <div class="trackInfo_wrapper">
+                        <div class="trackInfo">
+                            <div class="songName">Venus Fly (feat. Janelle Monáe)</div>
+                            <div class="artistName">Grimes</div>
+                            <div class="ablumName">Art Angels</div>
+                        </div>
+                        <div class="showArtistinfo"></div>
+                    </div>
+                    
+                    <div id="artistBio">
+                    Spanning influences such as dream pop, R&B, electronic music, hip-hop, and more, Grimes is the project of Vancouver-born and raised singer/songwriter/producer/visual artist Claire Boucher. She began making music while studying neuroscience at McGill University in Montreal, though her focus on music -- which included staging shows at an old textile factory that she and her friends dubbed Lab Synthèse -- ultimately led to her expulsion from the school. The scene that spawned Lab Synthèse also founded Arbutus Records, the label that released Boucher's early work. Two songs released under her own name appeared on Arbutus' spring 2009 sampler; her first two albums as Grimes, Geidi Primes and Halfaxa, arrived via the label in 2010. The following year, she collaborated on a split EP with d'Eon that was co-released by Arbutus and the like-minded Hippos in Tanks and appeared on Lykke Li's North American tour before announcing she had signed to 4AD in late 2011. Her debut for the label, Visions, arrived in early 2012. Its mix of bright pop and dark atmospheres earned instant critical acclaim, with the album appearing on many "Best of 2012" lists and earning a Juno Award for Electronic Album of the Year. Grimes signed to Jay-Z's Roc Nation management company in 2013, and released the single "Go" -- which was allegedly written for Rihanna -- in 2014. As she continued to work on her fourth album, in 2015 she collaborated with Bleachers on the song "Entropy," which appeared on the HBO TV series Girls, and released another single, "REALiTi," which featured a video directed by Boucher. That October, Grimes released her artwork for the upcoming album Art Angels as well as the singles "Flesh Without Blood/Life in the Vivid Dream" and "Scream," a collaboration with Taiwanese rapper Aristophanes. Art Angels was first issued as a digital release in November 2015, with physical releases arriving that December. ~ Heather Phares
+                    </div>
+                    
+                </div>
+                
+            </div>
+            
+            
+            <div class="col-md-6" id="content">
+            	
+                <div id="contentWrapper">
+            
+                    <div id="blurb">
+                        Hey Gabriel, don’t miss out on seeing Grimes live.  Check out this upcoming gig near you:
+                    </div>
+                    
+                    <div id="showInfo">
+                        <div class="showArtist">Grimes</div>
+                        <div class="showVenue">Paradise Rock Club</div>
+                        <div class="showCity">Boston, MA</div>
+                        <div class="showTickets">
+                            <a href="" class="btn">Get Tickets</a>
+                        </div>
+                    </div>
+            
+            	</div>
+                
+                <div id="relatedGigs">
+                        <div class="relatedHeader"> Related gigs near you</div>
+                        <div class="moreGigs">View more gigs <div class="viewMoregigs"></div></div>
+                        <div class="gigsWrapper">
+                        
+                            <div class="relatedGig">
+                                <img src="img/teendaze.jpg">
+                                <span class="relatedTitle">Teen Daze</span>
+                            </div>
+                            <div class="relatedGig">
+                                <img src="img/keepshelly.jpg">
+                                <span class="relatedTitle">Keep Shelly in Athens</span>
+                            </div>
+                            <div class="relatedGig">
+                                <img src="img/purityring.jpg">
+                                <span class="relatedTitle">Purity Ring</span>
+                            </div>
+                            <div class="relatedGig">
+                                <img src="img/borngold.jpg">
+                                <span class="relatedTitle">Born Gold</span>
+                            </div>
+                            
+                        </div>
+                
+                </div>
+                
+            </div>
+    </div>
+    </div>
+<script>
+
+$(".showArtistinfo").click(function(){
+	$(".albumArt").toggleClass('close');
+	$(".showArtistinfo").toggleClass('collapseDown');
+	$("#artistBio").toggleClass('open');
+	
+	});
+	
+	$(".viewMoregigs").click(function(){
+	$("#contentWrapper").toggleClass('close');
+	$(".viewMoregigs").toggleClass('collapseDown');
+	$("#relatedGigs").toggleClass('open');
+	
+	});
+	
+</script>
+
+
+</body>
+</html>
