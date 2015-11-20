@@ -116,13 +116,14 @@ PlayerView.prototype = {
         position = R.player.position();
 
         $('.player-current').text(this.toMinutes(position));
-        $('.player-progress-current').width((position / duration) + '%');
+        $('.player-progress-current').width((position / duration * 100) + '%');
         $('.player-remaining').text('-' + this.toMinutes(duration - position));
 
         this._interval = setInterval(function () {
             var position = R.player.position();
+
             $('.player-current').text(self.toMinutes(position));
-            $('.player-progress-current').width((position / duration) + '%');
+            $('.player-progress-current').width((position / duration * 100) + '%');
             $('.player-remaining').text('-' + self.toMinutes(duration - position));
         }, 1000);
     },
