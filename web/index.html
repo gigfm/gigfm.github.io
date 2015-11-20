@@ -344,6 +344,11 @@
 		background: rgba(0, 0, 0, 0.3);
 	}
 }
+
+    .modal-body, .modal-header {
+        color: #333;
+        font-size: 20px;
+    }
 	
 </style>
 </head>
@@ -394,7 +399,7 @@
                     </div>
                     
                     <div id="artistBio">
-                    Spanning influences such as dream pop, R&B, electronic music, hip-hop, and more, Grimes is the project of Vancouver-born and raised singer/songwriter/producer/visual artist Claire Boucher. She began making music while studying neuroscience at McGill University in Montreal, though her focus on music -- which included staging shows at an old textile factory that she and her friends dubbed Lab Synthèse -- ultimately led to her expulsion from the school. The scene that spawned Lab Synthèse also founded Arbutus Records, the label that released Boucher's early work. Two songs released under her own name appeared on Arbutus' spring 2009 sampler; her first two albums as Grimes, Geidi Primes and Halfaxa, arrived via the label in 2010. The following year, she collaborated on a split EP with d'Eon that was co-released by Arbutus and the like-minded Hippos in Tanks and appeared on Lykke Li's North American tour before announcing she had signed to 4AD in late 2011. Her debut for the label, Visions, arrived in early 2012. Its mix of bright pop and dark atmospheres earned instant critical acclaim, with the album appearing on many "Best of 2012" lists and earning a Juno Award for Electronic Album of the Year. Grimes signed to Jay-Z's Roc Nation management company in 2013, and released the single "Go" -- which was allegedly written for Rihanna -- in 2014. As she continued to work on her fourth album, in 2015 she collaborated with Bleachers on the song "Entropy," which appeared on the HBO TV series Girls, and released another single, "REALiTi," which featured a video directed by Boucher. That October, Grimes released her artwork for the upcoming album Art Angels as well as the singles "Flesh Without Blood/Life in the Vivid Dream" and "Scream," a collaboration with Taiwanese rapper Aristophanes. Art Angels was first issued as a digital release in November 2015, with physical releases arriving that December. ~ Heather Phares
+                        Spanning influences such as dream pop, R&B, electronic music, hip-hop, and more, Grimes is the project of Vancouver-born and raised singer/songwriter/producer/visual artist Claire Boucher. She began making music while studying neuroscience at McGill University in Montreal, though her focus on music -- which included staging shows at an old textile factory that she and her friends dubbed Lab Synthèse -- ultimately led to her expulsion from the school. The scene that spawned Lab Synthèse also founded Arbutus Records, the label that released Boucher's early work. Two songs released under her own name appeared on Arbutus' spring 2009 sampler; her first two albums as Grimes, Geidi Primes and Halfaxa, arrived via the label in 2010. The following year, she collaborated on a split EP with d'Eon that was co-released by Arbutus and the like-minded Hippos in Tanks and appeared on Lykke Li's North American tour before announcing she had signed to 4AD in late 2011. Her debut for the label, Visions, arrived in early 2012. Its mix of bright pop and dark atmospheres earned instant critical acclaim, with the album appearing on many "Best of 2012" lists and earning a Juno Award for Electronic Album of the Year. Grimes signed to Jay-Z's Roc Nation management company in 2013, and released the single "Go" -- which was allegedly written for Rihanna -- in 2014. As she continued to work on her fourth album, in 2015 she collaborated with Bleachers on the song "Entropy," which appeared on the HBO TV series Girls, and released another single, "REALiTi," which featured a video directed by Boucher. That October, Grimes released her artwork for the upcoming album Art Angels as well as the singles "Flesh Without Blood/Life in the Vivid Dream" and "Scream," a collaboration with Taiwanese rapper Aristophanes. Art Angels was first issued as a digital release in November 2015, with physical releases arriving that December. ~ Heather Phares
                     </div>
                     
                 </div>
@@ -412,9 +417,9 @@
                     
                     <div id="showInfo">
                         <div class="showArtist venue-artist-name"></div>
+                        <div class="showDate venue-show-date"></div>
                         <div class="showVenue venue-name"></div>
                         <div class="showCity venue-show-location"></div>
-                        <div class="showDate venue-show-date"></div>
                         <div class="showTickets">
                             <a href="#" target="_blank" class="btn venue-buy-tickets-link">Get Tickets</a>
                         </div>
@@ -423,9 +428,29 @@
             	</div>
                 
                 <div id="relatedGigs">
-                        <div class="relatedHeader"> Related gigs near you (location) <span class="changeLocation">Ghange Location</span></div>
+                        <div class="relatedHeader"> Related gigs near you (<span class="current-location"></span>) <span data-toggle="modal" href="#" data-target="#myModal" class="changeLocation">change location</span></div>
                         <!--<div class="moreGigs">View more gigs <div class="viewMoregigs"></div></div>-->
                         <div class="gigsWrapper"></div>
+                </div>
+
+                <!-- Modal -->
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="myModalLabel">Change Location</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div data-latlong="40.714224,-73.961452" class="change-location"><a href="#" >Brooklyn</a></div>
+                                <div data-latlong="30.0221731,-90.0235116" class="change-location"><a href="#" >New Orleans</a></div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary">Save changes</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
             </div>
@@ -440,7 +465,6 @@
     </script>
 
     <script src="dist/js/app.js"></script>
-    <script type="text/javascript" href="bower_components/bootstrap/dist/js/bootstrap.js" ></script>
 
 </body>
 </html>

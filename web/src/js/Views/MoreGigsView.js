@@ -19,6 +19,21 @@ function MoreGigsView(gigs) {
 
     R.ready(this.onReady.bind(this));
     $.extend(this, new Events());
+
+    $('.change-location').click(function (event) {
+        var latlong = $(event.target).data('latlong');
+        var $currentLocation = $('.current-location');
+
+        $.getJSON('http://maps.googleapis.com/maps/api/geocode/json', {
+            latlng: latlong
+        }).done(function (response) {
+            if (response && response.results) {
+                var location = response.results[3].address_components[0].long_name;
+                $currentLocation.text(location);
+            }
+        });
+
+    });
 }
 
 

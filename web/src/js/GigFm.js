@@ -2,8 +2,10 @@
 
 
 var $ = require('../../bower_components/jquery/dist/jquery');
+window.jQuery = $;
 
 require('../../lib/rdio-utils/rdio-utils.js');
+require('../../bower_components/bootstrap/dist/js/npm');
 
 // Classes
 var Api = require('./Classes/Api.js');
@@ -30,10 +32,25 @@ function GigFm() {
 GigFm.prototype = {
     onGetLocation: function (loc) {
         var api = new Api();
+        var $currentLocation = $('.current-location');
+
+        loc = {
+            lat: '40.714224'
+            , long: '-73.961452'
+        };
 
         api.getTracksByLocation(loc.lat, loc.long)
             .done(this.onApiSuccess.bind(this))
             .fail(this.onApiFail.bind(this));
+
+        $.getJSON('http://maps.googleapis.com/maps/api/geocode/json', {
+           latlng: loc.lat + ',' + loc.long
+        }).done(function (response) {
+            if (response && response.results) {
+                var location = response.results[3].address_components[0].long_name;
+                $currentLocation.text(location);
+            }
+        });
     },
 
 
